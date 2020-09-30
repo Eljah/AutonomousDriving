@@ -4,6 +4,7 @@ import org.opencv.core.*;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -258,7 +259,9 @@ public class JavaCVPrjt01 {
                                     Imgproc.pointPolygonTest(incorrectCrossingArea2f, r.tl(), true) >= 0 ||
                                     Imgproc.pointPolygonTest(incorrectCrossingArea2f, r.br(), true) >= 0 ||
                                     Imgproc.pointPolygonTest(incorrectCrossingArea2f, new Point(rX1, rY2), true) >= 0 ||
-                                    Imgproc.pointPolygonTest(incorrectCrossingArea2f, new Point(rX2, rY1), true) >= 0
+                                    Imgproc.pointPolygonTest(incorrectCrossingArea2f, new Point(rX2, rY1), true) >= 0 ||
+                                    Imgproc.pointPolygonTest(incorrectCrossingArea2f, massCenterMatOfPoint2f(contour), true) >= 0 ||
+                                    Imgproc.pointPolygonTest(correctCrossingArea2f, massCenterMatOfPoint2f(contour), true) >= 0
                             )
                     rect_array.add(r);
                     Imgproc.drawContours(imag, contours, maxAreaIdx, new Scalar(0, 0, 255));
@@ -270,5 +273,13 @@ public class JavaCVPrjt01 {
 
         return rect_array;
 
+    }
+
+    public static Point massCenterMatOfPoint2f(final Mat map) {
+        final Moments moments = Imgproc.moments(map);
+        final Point centroid = new Point();
+        centroid.x = moments.get_m10() / moments.get_m00();
+        centroid.y = moments.get_m01() / moments.get_m00();
+        return centroid;
     }
 }
