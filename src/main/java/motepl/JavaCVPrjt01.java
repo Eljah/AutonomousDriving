@@ -1,18 +1,23 @@
 package motepl;
 
 import org.opencv.core.*;
+import org.opencv.core.Point;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,12 +30,15 @@ public class JavaCVPrjt01 {
     static MatOfPoint incorrectCrossingArea = null;
     static MatOfPoint2f incorrectCrossingArea2f = null;
     static int counterSinceLastDetection = 15;
-    static int counterRegistration = 0;
+    static volatile int counterRegistration = 0;
     final static int counterSinceLastDetectionMax = 15;
     final static int counterForRegistrationMax = 3;
     static int contoursCount = 0;
     static int olderContoursCount = 0;
     static int olderCounterSinceLastDetection = 0;
+
+    static List<BufferedImage> images = new ArrayList<>();
+    static Date timestamp = null;
 
     static {
         //System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -53,7 +61,6 @@ public class JavaCVPrjt01 {
                 new Point(360, 500)
         );
         incorrectCrossingArea2f = new MatOfPoint2f(incorrectCrossingArea.toArray());
-
         //Mat mat = Mat.eye(3, 3, CvType.CV_8UC1);
         //camera = new VideoCapture("resources/videoSample.mp4");
     }
@@ -203,7 +210,8 @@ public class JavaCVPrjt01 {
                 }
                 i = 1;
 
-                ImageIcon image = new ImageIcon(Mat2bufferedImage(imag));
+                    BufferedImage humanVision = Mat2bufferedImage(imag);
+                    ImageIcon image = new ImageIcon();
                 vidpanel.setIcon(image);
                 vidpanel.repaint();
 
@@ -211,7 +219,13 @@ public class JavaCVPrjt01 {
                 vidpanel2.setIcon(image2);
                 vidpanel2.repaint();
 
-                tempon_frame = outerBox.clone();
+                    try {
+                        saveIfNeeded(humanVision);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    tempon_frame = outerBox.clone();
                 }
             }
             else {
@@ -341,5 +355,65 @@ public class JavaCVPrjt01 {
             counterRegistration=0;
         }
         return toBeReturned;
+    }
+
+    public static void saveIfNeeded(BufferedImage image) throws IOException {
+        int heightTotal = 0;
+        int maxWidth = 100;
+
+        if (counterRegistration == 1 && images.size()==0) {
+            timestamp = new Date();
+            images.add(image);
+        }
+        if (counterRegistration == 2 && images.size()==1) {
+            images.add(image);
+        }
+        if (counterRegistration == 3  && images.size()==2) {
+            images.add(image);
+            for (BufferedImage bufferedImage : images) {
+                heightTotal += bufferedImage.getHeight();
+                if (bufferedImage.getWidth() > maxWidth) {
+                    maxWidth = bufferedImage.getWidth();
+                }
+            }
+
+
+            int heightCurr = 0;
+            BufferedImage concatImage = new BufferedImage(maxWidth, heightTotal, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = concatImage.createGraphics();
+            for (BufferedImage bufferedImage : images) {
+                g2d.drawImage(bufferedImage, 0, heightCurr, null);
+                heightCurr += bufferedImage.getHeight();
+            }
+
+            File compressedImageFile = new File("D:\\downloads\\crossing" + timestamp.getTime()+".jpg");
+            OutputStream outputStream = new FileOutputStream(compressedImageFile);
+
+
+            float imageQuality = 0.9f;
+            Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName("jpeg");
+
+            if (!imageWriters.hasNext())
+                throw new IllegalStateException("Writers Not Found!!");
+
+            ImageWriter imageWriter = imageWriters.next();
+            ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream);
+            imageWriter.setOutput(imageOutputStream);
+
+            ImageWriteParam imageWriteParam = imageWriter.getDefaultWriteParam();
+
+            //Set the compress quality metrics
+            imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            imageWriteParam.setCompressionQuality(imageQuality);
+
+            //Created image
+            imageWriter.write(null, new IIOImage(concatImage, null, null), imageWriteParam);
+
+            // close all streams
+            outputStream.close();
+            imageOutputStream.close();
+            imageWriter.dispose();
+            images.clear();
+        }
     }
 }
