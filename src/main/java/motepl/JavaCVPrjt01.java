@@ -65,8 +65,12 @@ public class JavaCVPrjt01 {
 
         int i = 0;
 
+        int frames = 0;
+
         while (true) {
-            if (camera.read(frame)) {
+            frames++;
+            if (camera.read(frame) && frames == 5) {
+                frames = 0;
                 Imgproc.resize(frame, frame, sz);
                 imag = frame.clone();
                 outerBox = new Mat(frame.size(), CvType.CV_8UC1);
@@ -85,7 +89,7 @@ public class JavaCVPrjt01 {
 
                 if (i == 1) {
                     Core.subtract(outerBox, tempon_frame, diff_frame);
-                    Imgproc.adaptiveThreshold(diff_frame, diff_frame, 255,
+                    Imgproc.adaptiveThreshold(diff_frame, diff_frame, 120,//255,
                             Imgproc.ADAPTIVE_THRESH_MEAN_C,
                             Imgproc.THRESH_BINARY_INV, 5, 2);
                     //imag2 = diff_frame;
