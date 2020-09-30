@@ -38,6 +38,7 @@ public class JavaCVPrjt01 {
     static int olderCounterSinceLastDetection = 0;
 
     static List<BufferedImage> images = new ArrayList<>();
+    static List<Double> coordinates = new ArrayList<>();
     static Date timestamp = null;
 
     static {
@@ -190,6 +191,7 @@ public class JavaCVPrjt01 {
                             Core.rectangle(imag2, obj.br(), obj.tl(),
                                    green, 1);
                         }
+
                     }
 
                     //areas of interest:
@@ -211,19 +213,23 @@ public class JavaCVPrjt01 {
                 i = 1;
 
                     BufferedImage humanVision = Mat2bufferedImage(imag);
-                    ImageIcon image = new ImageIcon();
+                    if (array.size() > 0) {
+                        try {
+                            saveIfNeeded(humanVision, (array.get(0).br().x+array.get(0).x)/2
+                            );
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    ImageIcon image = new ImageIcon(Mat2bufferedImage(imag));
                 vidpanel.setIcon(image);
                 vidpanel.repaint();
 
                 ImageIcon image2 = new ImageIcon(Mat2bufferedImage(imag2));
                 vidpanel2.setIcon(image2);
                 vidpanel2.repaint();
-
-                    try {
-                        saveIfNeeded(humanVision);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
 
                     tempon_frame = outerBox.clone();
                 }
@@ -307,6 +313,7 @@ public class JavaCVPrjt01 {
 
                         //new movement started
                         counterSinceLastDetection = counterSinceLastDetectionMax;
+
                     }
                 }
             }
@@ -353,23 +360,35 @@ public class JavaCVPrjt01 {
         if (toBeReturned) {
             System.out.println("START");
             counterRegistration=0;
+            images.clear();
+            coordinates.clear();
         }
         return toBeReturned;
     }
 
-    public static void saveIfNeeded(BufferedImage image) throws IOException {
+    public static void saveIfNeeded(BufferedImage image, double xCoordinate) throws IOException {
         int heightTotal = 0;
         int maxWidth = 100;
 
         if (counterRegistration == 1 && images.size()==0) {
+            System.out.println("ADDING 1!");
             timestamp = new Date();
             images.add(image);
+            coordinates.add(xCoordinate);
         }
         if (counterRegistration == 2 && images.size()==1) {
+            System.out.println("ADDING 2!");
             images.add(image);
+            coordinates.add(xCoordinate);
         }
-        if (counterRegistration == 3  && images.size()==2) {
+        if (counterRegistration >= 3 && images.size() == 2 && counterSinceLastDetection > 0
+                && (coordinates.get(1) - coordinates.get(0)) / (xCoordinate - coordinates.get(1)) > 0
+                ) {
+            System.out.println("SAVING!");
+            System.out.println((coordinates.get(1) - coordinates.get(0)) / (xCoordinate - coordinates.get(1)));
+            System.out.println("(" + coordinates.get(1) + "-" + coordinates.get(0) + ")/(" + xCoordinate + "-" + coordinates.get(1) + ")");
             images.add(image);
+            coordinates.add(xCoordinate);
             for (BufferedImage bufferedImage : images) {
                 heightTotal += bufferedImage.getHeight();
                 if (bufferedImage.getWidth() > maxWidth) {
@@ -414,6 +433,7 @@ public class JavaCVPrjt01 {
             imageOutputStream.close();
             imageWriter.dispose();
             images.clear();
+            coordinates.clear();
         }
     }
 }
