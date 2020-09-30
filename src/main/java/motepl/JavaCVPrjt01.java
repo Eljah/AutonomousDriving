@@ -19,6 +19,10 @@ public class JavaCVPrjt01 {
     static VideoCapture camera;
     static Mat imag = null;
     static Mat imag2 = null;
+    static MatOfPoint correctCrossingArea = null;
+    static MatOfPoint2f correctCrossingArea2f = null;
+    static MatOfPoint incorrectCrossingArea = null;
+    static MatOfPoint2f incorrectCrossingArea2f = null;
 
     static {
         //System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -28,6 +32,20 @@ public class JavaCVPrjt01 {
         //nu.pattern.OpenCV.loadShared();
         camera = new VideoCapture();
         System.out.println("Hey World !");
+
+        correctCrossingArea = new MatOfPoint(
+                new Point(470, 580), new Point(470, 560), new Point(590, 550),
+                new Point(800, 570), new Point(600, 620),
+                new Point(470, 580)
+        );
+        correctCrossingArea2f = new MatOfPoint2f(correctCrossingArea.toArray());
+        incorrectCrossingArea = new MatOfPoint(
+                new Point(360, 500), new Point(530, 500), new Point(1100, 530),
+                new Point(800, 540), //new Point(700, 620),
+                new Point(360, 500)
+        );
+        incorrectCrossingArea2f = new MatOfPoint2f(incorrectCrossingArea.toArray());
+
         //Mat mat = Mat.eye(3, 3, CvType.CV_8UC1);
         //camera = new VideoCapture("resources/videoSample.mp4");
     }
@@ -151,15 +169,19 @@ public class JavaCVPrjt01 {
                     //areas of interest:
 
                     //Drawing an arrowed line
-                    MatOfPoint points = new MatOfPoint (
-                            new Point(470, 580), new Point(470, 560), new Point(590, 550),
-                            new Point(900, 595), new Point(700, 620),
-                            new Point(470, 580)
-                    );
-                    List<MatOfPoint> matOfPointList =  new ArrayList<>();
-                    matOfPointList.add(points);
-                    Imgproc.drawContours(imag, matOfPointList, -1, new Scalar(0, 255, 255));
-                    Imgproc.drawContours(imag2, matOfPointList, -1, new Scalar(0, 255, 255));
+
+                    List<MatOfPoint> matOfPointListCorrect = new ArrayList<>();
+                    matOfPointListCorrect.add(correctCrossingArea);
+
+                    List<MatOfPoint> matOfPointListIncorrect = new ArrayList<>();
+                    matOfPointListIncorrect.add(incorrectCrossingArea);
+
+
+                    Imgproc.drawContours(imag, matOfPointListCorrect, -1, new Scalar(0, 255, 255));
+                    Imgproc.drawContours(imag2, matOfPointListCorrect, -1, new Scalar(0, 255, 255));
+
+                    Imgproc.drawContours(imag, matOfPointListIncorrect, -1, new Scalar(255, 255, 0));
+                    Imgproc.drawContours(imag2, matOfPointListIncorrect, -1, new Scalar(255, 255, 0));
                 }
                 i = 1;
 
@@ -221,6 +243,23 @@ public class JavaCVPrjt01 {
                 maxAreaIdx = idx;
                 r = Imgproc.boundingRect(contours.get(maxAreaIdx));
                 if (r.width < r.height) {
+
+                    double rX1 = r.tl().x;
+                    double rY1 = r.tl().y;
+                    double rX2 = r.br().x;
+                    double rY2 = r.br().y;
+
+                    if (
+                            Imgproc.pointPolygonTest(correctCrossingArea2f, r.tl(), true) >= 0 ||
+                                    Imgproc.pointPolygonTest(correctCrossingArea2f, r.br(), true) >= 0 ||
+                                    Imgproc.pointPolygonTest(correctCrossingArea2f, new Point(rX1, rY2), true) >= 0 ||
+                                    Imgproc.pointPolygonTest(correctCrossingArea2f, new Point(rX2, rY1), true) >= 0
+                                    ||
+                                    Imgproc.pointPolygonTest(incorrectCrossingArea2f, r.tl(), true) >= 0 ||
+                                    Imgproc.pointPolygonTest(incorrectCrossingArea2f, r.br(), true) >= 0 ||
+                                    Imgproc.pointPolygonTest(incorrectCrossingArea2f, new Point(rX1, rY2), true) >= 0 ||
+                                    Imgproc.pointPolygonTest(incorrectCrossingArea2f, new Point(rX2, rY1), true) >= 0
+                            )
                     rect_array.add(r);
                     Imgproc.drawContours(imag, contours, maxAreaIdx, new Scalar(0, 0, 255));
                     Imgproc.drawContours(imag2, contours, maxAreaIdx, new Scalar(0, 0, 255));
