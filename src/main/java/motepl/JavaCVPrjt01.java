@@ -29,16 +29,17 @@ public class JavaCVPrjt01 {
     static MatOfPoint2f correctCrossingArea2f = null;
     static MatOfPoint incorrectCrossingArea = null;
     static MatOfPoint2f incorrectCrossingArea2f = null;
-    static int counterSinceLastDetection = 15;
+    static int counterSinceLastDetection = 30;
     static volatile int counterRegistration = 0;
-    final static int counterSinceLastDetectionMax = 15;
+    final static int counterSinceLastDetectionMax = 30;
     final static int counterForRegistrationMax = 3;
     static int contoursCount = 0;
     static int olderContoursCount = 0;
     static int olderCounterSinceLastDetection = 0;
 
     static List<BufferedImage> images = new ArrayList<>();
-    static List<Double> coordinates = new ArrayList<>();
+    static List<Double> coordinatesX = new ArrayList<>();
+    static List<Double> coordinatesY = new ArrayList<>();
     static Date timestamp = null;
 
     static {
@@ -171,14 +172,17 @@ public class JavaCVPrjt01 {
                     imag2 = tempon_frame2;
 
                     Scalar green = null;
+                    int frameThikness = 1;
 
                     if (isMotionContinuationDetected())
                     {
                         green =  new Scalar(255, 255, 0);
+                        frameThikness = 1;
                     }
                     if (isMotionStartDetected())
                     {
                         green =  new Scalar(0, 255, 0);
+                        frameThikness = 3;
                     }
 
                     if (array.size() > 0) {
@@ -187,9 +191,9 @@ public class JavaCVPrjt01 {
                         while (it2.hasNext()) {
                             Rect obj = it2.next();
                             Core.rectangle(imag, obj.br(), obj.tl(),
-                                    green, 1);
+                                    green, frameThikness);
                             Core.rectangle(imag2, obj.br(), obj.tl(),
-                                   green, 1);
+                                   green, frameThikness);
                         }
 
                     }
@@ -215,7 +219,7 @@ public class JavaCVPrjt01 {
                     BufferedImage humanVision = Mat2bufferedImage(imag);
                     if (array.size() > 0) {
                         try {
-                            saveIfNeeded(humanVision, (array.get(0).br().x+array.get(0).x)/2
+                            saveIfNeeded(humanVision, (array.get(0).br().x+array.get(0).x)/2, (array.get(0).br().y+array.get(0).y)/2
                             );
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -361,12 +365,13 @@ public class JavaCVPrjt01 {
             System.out.println("START");
             counterRegistration=0;
             images.clear();
-            coordinates.clear();
+            coordinatesX.clear();
+            coordinatesY.clear();
         }
         return toBeReturned;
     }
 
-    public static void saveIfNeeded(BufferedImage image, double xCoordinate) throws IOException {
+    public static void saveIfNeeded(BufferedImage image, double xCoordinate, double yCoordinate) throws IOException {
         int heightTotal = 0;
         int maxWidth = 100;
 
@@ -374,21 +379,27 @@ public class JavaCVPrjt01 {
             System.out.println("ADDING 1!");
             timestamp = new Date();
             images.add(image);
-            coordinates.add(xCoordinate);
+            coordinatesX.add(xCoordinate);
+            coordinatesY.add(yCoordinate);
         }
         if (counterRegistration == 2 && images.size()==1) {
             System.out.println("ADDING 2!");
             images.add(image);
-            coordinates.add(xCoordinate);
+            coordinatesX.add(xCoordinate);
+            coordinatesY.add(yCoordinate);
         }
         if (counterRegistration >= 3 && images.size() == 2 && counterSinceLastDetection > 0
-                && (coordinates.get(1) - coordinates.get(0)) / (xCoordinate - coordinates.get(1)) > 0
+                && (coordinatesX.get(1) - coordinatesX.get(0)) / (xCoordinate - coordinatesX.get(1)) > 0
+                && (coordinatesY.get(1) - coordinatesY.get(0)) / (yCoordinate - coordinatesY.get(1)) > 0
                 ) {
             System.out.println("SAVING!");
-            System.out.println((coordinates.get(1) - coordinates.get(0)) / (xCoordinate - coordinates.get(1)));
-            System.out.println("(" + coordinates.get(1) + "-" + coordinates.get(0) + ")/(" + xCoordinate + "-" + coordinates.get(1) + ")");
+            System.out.println((coordinatesX.get(1) - coordinatesX.get(0)) / (xCoordinate - coordinatesX.get(1)));
+            System.out.println("(" + coordinatesX.get(1) + "-" + coordinatesX.get(0) + ")/(" + xCoordinate + "-" + coordinatesX.get(1) + ")");
+            System.out.println((coordinatesY.get(1) - coordinatesY.get(0)) / (yCoordinate - coordinatesY.get(1)));
+            System.out.println("(" + coordinatesY.get(1) + "-" + coordinatesY.get(0) + ")/(" + yCoordinate + "-" + coordinatesY.get(1) + ")");
             images.add(image);
-            coordinates.add(xCoordinate);
+            coordinatesX.add(xCoordinate);
+            coordinatesY.add(yCoordinate);
             for (BufferedImage bufferedImage : images) {
                 heightTotal += bufferedImage.getHeight();
                 if (bufferedImage.getWidth() > maxWidth) {
@@ -433,7 +444,7 @@ public class JavaCVPrjt01 {
             imageOutputStream.close();
             imageWriter.dispose();
             images.clear();
-            coordinates.clear();
+            coordinatesX.clear();
         }
     }
 }
