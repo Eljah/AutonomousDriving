@@ -1,12 +1,5 @@
 package motepl;
 
-import org.opencv.core.*;
-import org.opencv.highgui.Highgui;
-import org.opencv.highgui.VideoCapture;
-import org.opencv.imgproc.Imgproc;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,52 +8,48 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class JavaCVPrjt01 {
-    static VideoCapture camera;
-    static Mat imag = null;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.highgui.Highgui;
+import org.opencv.highgui.VideoCapture;
+import org.opencv.imgproc.Imgproc;
+
+public class JavaCPPrjt02 {
     static {
-        //System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         System.load("D:\\Downloads\\opencv\\build\\java\\x64\\opencv_java2411.dll");
         System.load("D:\\Downloads\\opencv\\build\\x64\\vc12\\bin\\opencv_ffmpeg2411_64.dll");
-        //-Djava.library.path=""
-        //nu.pattern.OpenCV.loadShared();
-        camera = new VideoCapture();
-        System.out.println("Hey World !");
-        //Mat mat = Mat.eye(3, 3, CvType.CV_8UC1);
-        //camera = new VideoCapture("resources/videoSample.mp4");
+
     }
+
+    static Mat imag = null;
+
     public static void main(String[] args) {
         JFrame jframe = new JFrame("HUMAN MOTION DETECTOR FPS");
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JLabel vidpanel = new JLabel();
         jframe.setContentPane(vidpanel);
         jframe.setSize(1280,720) ;
-        //jframe.setSize(400,120) ;
         jframe.setVisible(true);
-
-        JFrame jframe2 = new JFrame("HUMAN MOTION DETECTOR FPS");
-        jframe2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JLabel vidpanel2 = new JLabel();
-        jframe2.setContentPane(vidpanel2);
-        jframe2.setSize(1280, 720);
-        //jframe.setSize(400,120) ;
-        jframe2.setVisible(true);
 
         Mat frame = new Mat();
         Mat outerBox = new Mat();
         Mat diff_frame = null;
-        Mat diff_frame2 = null;
         Mat tempon_frame = null;
+        ArrayList<Rect> array = new ArrayList<Rect>();
+        VideoCapture camera = new VideoCapture(
+                "D:/Downloads/video5.mp4");
         Size sz = new Size(1280,720);
-        //Size sz = new Size(400,120);
-
-
-        System.out.println(camera.isOpened());
-        //camera.open("D:/Downloads/video4.mp4");
-        camera.open("resources\\videoSample.mp4");
-        System.out.println(camera.isOpened());
-
         int i = 0;
 
         while (true) {
@@ -68,11 +57,9 @@ public class JavaCVPrjt01 {
                 Imgproc.resize(frame, frame, sz);
                 imag = frame.clone();
                 outerBox = new Mat(frame.size(), CvType.CV_8UC1);
-                diff_frame2 = frame.clone();
                 Imgproc.cvtColor(frame, outerBox, Imgproc.COLOR_BGR2GRAY);
-                Imgproc.GaussianBlur(outerBox, outerBox, new Size(9, 9), 0);
-                ArrayList<Rect> array = new ArrayList<Rect>();
-                //Photo.fastNlMeansDenoising(outerBox, outerBox,5,3,3);
+                Imgproc.GaussianBlur(outerBox, outerBox, new Size(3, 3), 0);
+
                 if (i == 0) {
                     jframe.setSize(frame.width(), frame.height());
                     diff_frame = new Mat(outerBox.size(), CvType.CV_8UC1);
@@ -97,16 +84,12 @@ public class JavaCVPrjt01 {
 
                     }
                 }
+
                 i = 1;
 
-                ImageIcon image = new ImageIcon(Mat2bufferedImage(diff_frame));
+                ImageIcon image = new ImageIcon(Mat2bufferedImage(imag));
                 vidpanel.setIcon(image);
                 vidpanel.repaint();
-
-                ImageIcon image2 = new ImageIcon(Mat2bufferedImage(diff_frame2));
-                vidpanel2.setIcon(image2);
-                vidpanel2.repaint();
-
                 tempon_frame = outerBox.clone();
 
             }
@@ -140,17 +123,16 @@ public class JavaCVPrjt01 {
         Rect r = null;
         ArrayList<Rect> rect_array = new ArrayList<Rect>();
 
-        for (int idx = 0; idx < contours.size(); idx++) {
-            Mat contour = contours.get(idx);
-            double contourarea = Imgproc.contourArea(contour);
-            if (contourarea > maxArea) {
-                // maxArea = contourarea;
-                maxAreaIdx = idx;
-                r = Imgproc.boundingRect(contours.get(maxAreaIdx));
-                rect_array.add(r);
-                Imgproc.drawContours(imag, contours, maxAreaIdx, new Scalar(0, 0, 255));
-            }
+        for (int idx = 0; idx < contours.size(); idx++) { Mat contour = contours.get(idx); double contourarea = Imgproc.contourArea(contour); if (contourarea > maxArea) {
+            // maxArea = contourarea;
+            maxAreaIdx = idx;
+            r = Imgproc.boundingRect(contours.get(maxAreaIdx));
+            rect_array.add(r);
+            Imgproc.drawContours(imag, contours, maxAreaIdx, new Scalar(0,0, 255));
         }
+
+        }
+
         v.release();
 
         return rect_array;
