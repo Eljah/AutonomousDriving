@@ -1,5 +1,12 @@
 package motepl;
 
+import org.opencv.core.*;
+import org.opencv.highgui.Highgui;
+import org.opencv.highgui.VideoCapture;
+import org.opencv.imgproc.Imgproc;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -7,23 +14,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.highgui.Highgui;
-import org.opencv.highgui.VideoCapture;
-import org.opencv.imgproc.Imgproc;
 
 public class JavaCPPrjt02 {
     static {
@@ -123,7 +113,11 @@ public class JavaCPPrjt02 {
         Rect r = null;
         ArrayList<Rect> rect_array = new ArrayList<Rect>();
 
-        for (int idx = 0; idx < contours.size(); idx++) { Mat contour = contours.get(idx); double contourarea = Imgproc.contourArea(contour); if (contourarea > maxArea) {
+        for (int idx = 0; idx < contours.size(); idx++) {
+            Mat contour = contours.get(idx);
+            double contourarea = Imgproc.contourArea(contour);
+            if (contourarea > maxArea) {
+
             // maxArea = contourarea;
             maxAreaIdx = idx;
             r = Imgproc.boundingRect(contours.get(maxAreaIdx));

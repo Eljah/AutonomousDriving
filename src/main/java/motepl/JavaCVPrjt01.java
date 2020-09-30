@@ -18,6 +18,7 @@ import java.util.List;
 public class JavaCVPrjt01 {
     static VideoCapture camera;
     static Mat imag = null;
+    static Mat imag2 = null;
 
     static {
         //System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -52,13 +53,14 @@ public class JavaCVPrjt01 {
         Mat diff_frame = null;
         Mat diff_frame2 = null;
         Mat tempon_frame = null;
+        Mat tempon_frame2 = null;
         Size sz = new Size(1280,720);
         //Size sz = new Size(400,120);
 
 
         System.out.println(camera.isOpened());
-        //camera.open("D:/Downloads/video4.mp4");
-        camera.open("resources\\videoSample.mp4");
+        camera.open("D:/Downloads/video5.mp4");
+        //camera.open("resources\\videoSample.mp4");
         System.out.println(camera.isOpened());
 
         int i = 0;
@@ -68,16 +70,17 @@ public class JavaCVPrjt01 {
                 Imgproc.resize(frame, frame, sz);
                 imag = frame.clone();
                 outerBox = new Mat(frame.size(), CvType.CV_8UC1);
-                diff_frame2 = frame.clone();
+                //diff_frame2 = frame.clone();
+
                 Imgproc.cvtColor(frame, outerBox, Imgproc.COLOR_BGR2GRAY);
                 Imgproc.GaussianBlur(outerBox, outerBox, new Size(9, 9), 0);
                 ArrayList<Rect> array = new ArrayList<Rect>();
                 //Photo.fastNlMeansDenoising(outerBox, outerBox,5,3,3);
                 if (i == 0) {
                     jframe.setSize(frame.width(), frame.height());
-                    diff_frame = new Mat(outerBox.size(), CvType.CV_8UC1);
-                    tempon_frame = new Mat(outerBox.size(), CvType.CV_8UC1);
+                    //diff_frame = new Mat(outerBox.size(), CvType.CV_8UC1);                    /
                     diff_frame = outerBox.clone();
+                    imag2 = diff_frame;
                 }
 
                 if (i == 1) {
@@ -85,7 +88,11 @@ public class JavaCVPrjt01 {
                     Imgproc.adaptiveThreshold(diff_frame, diff_frame, 255,
                             Imgproc.ADAPTIVE_THRESH_MEAN_C,
                             Imgproc.THRESH_BINARY_INV, 5, 2);
+                    //imag2 = diff_frame;
                     array = detection_contours(diff_frame);
+                    tempon_frame2 = new Mat(frame.size(), CvType.CV_8UC3);
+                    Imgproc.cvtColor(diff_frame, tempon_frame2, Imgproc.COLOR_GRAY2BGR);
+                    imag2 = tempon_frame2;
                     if (array.size() > 0) {
 
                         Iterator<Rect> it2 = array.iterator();
@@ -93,17 +100,19 @@ public class JavaCVPrjt01 {
                             Rect obj = it2.next();
                             Core.rectangle(imag, obj.br(), obj.tl(),
                                     new Scalar(0, 255, 0), 1);
+                            Core.rectangle(imag2, obj.br(), obj.tl(),
+                                    new Scalar(0, 255, 0), 1);
                         }
 
                     }
                 }
                 i = 1;
 
-                ImageIcon image = new ImageIcon(Mat2bufferedImage(diff_frame));
+                ImageIcon image = new ImageIcon(Mat2bufferedImage(imag));
                 vidpanel.setIcon(image);
                 vidpanel.repaint();
 
-                ImageIcon image2 = new ImageIcon(Mat2bufferedImage(diff_frame2));
+                ImageIcon image2 = new ImageIcon(Mat2bufferedImage(imag2));
                 vidpanel2.setIcon(image2);
                 vidpanel2.repaint();
 
@@ -149,6 +158,7 @@ public class JavaCVPrjt01 {
                 r = Imgproc.boundingRect(contours.get(maxAreaIdx));
                 rect_array.add(r);
                 Imgproc.drawContours(imag, contours, maxAreaIdx, new Scalar(0, 0, 255));
+                Imgproc.drawContours(imag2, contours, maxAreaIdx, new Scalar(0, 0, 255));
             }
         }
         v.release();
