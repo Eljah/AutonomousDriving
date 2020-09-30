@@ -69,7 +69,8 @@ public class JavaCVPrjt01 {
 
         while (true) {
             frames++;
-            if (camera.read(frame) && frames == 5) {
+            if (frames == 10) {
+                if (camera.read(frame)) {
                 frames = 0;
                 Imgproc.resize(frame, frame, sz);
                 imag = frame.clone();
@@ -89,7 +90,7 @@ public class JavaCVPrjt01 {
 
                 if (i == 1) {
                     Core.subtract(outerBox, tempon_frame, diff_frame);
-                    Imgproc.adaptiveThreshold(diff_frame, diff_frame, 120,//255,
+                    Imgproc.adaptiveThreshold(diff_frame, diff_frame, 1000,//255,
                             Imgproc.ADAPTIVE_THRESH_MEAN_C,
                             Imgproc.THRESH_BINARY_INV, 5, 2);
                     //imag2 = diff_frame;
@@ -121,7 +122,10 @@ public class JavaCVPrjt01 {
                 vidpanel2.repaint();
 
                 tempon_frame = outerBox.clone();
-
+                }
+            }
+            else {
+                camera.read(frame);
             }
         }
     }
@@ -145,6 +149,9 @@ public class JavaCVPrjt01 {
         Mat v = new Mat();
         Mat vv = outmat.clone();
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        //Imgproc.findCont ours(vv, contours, v, Imgproc.RETR_LIST,
+        //        Imgproc.CHAIN_APPROX_SIMPLE);
+        //Imgproc.Canny(vv,vv, 10, 50, 3, false);
         Imgproc.findContours(vv, contours, v, Imgproc.RETR_LIST,
                 Imgproc.CHAIN_APPROX_SIMPLE);
 
