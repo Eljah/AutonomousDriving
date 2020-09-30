@@ -103,8 +103,9 @@ public class JavaCVPrjt01 {
                     Mat thicken = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 3,20));
                     Mat horisontalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( vertical_size,1));
                     Mat noice = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 1,3));
-                    Mat car = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 100,30));
+                    Mat car = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(200, 40));
                     Mat man = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 20,90));
+
 
                     //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 53,13));
                     //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 40,20));
@@ -121,8 +122,12 @@ public class JavaCVPrjt01 {
 
                     /// /Imgproc.dilate(diff_frame, diff_frame, man);
 
-                    //Imgproc.dilate(diff_frame, diff_frame,thicken);
-                    //Imgproc.erode(diff_frame, diff_frame, horisontal);
+
+                    //Imgproc.dilate(diff_frame, diff_frame, car);
+                    //Imgproc.erode(diff_frame, diff_frame, car);
+
+                    //Imgproc.dilate(diff_frame, diff_frame, man);
+                    //Imgproc.erode(diff_frame, diff_frame, man);
                     //Imgproc.dilate(diff_frame, diff_frame,thicken);
                     //Imgproc.erode(diff_frame, diff_frame, noice);
 
@@ -196,13 +201,17 @@ public class JavaCVPrjt01 {
         for (int idx = 0; idx < contours.size(); idx++) {
             Mat contour = contours.get(idx);
             double contourarea = Imgproc.contourArea(contour);
+
             if (contourarea > minArea && contourarea < maxArea) {
+                // && contour.width() < contour.height() toto understand why it allows wide contours
                 // maxArea = contourarea;
                 maxAreaIdx = idx;
                 r = Imgproc.boundingRect(contours.get(maxAreaIdx));
-                rect_array.add(r);
-                Imgproc.drawContours(imag, contours, maxAreaIdx, new Scalar(0, 0, 255));
-                Imgproc.drawContours(imag2, contours, maxAreaIdx, new Scalar(0, 0, 255));
+                if (r.width < r.height) {
+                    rect_array.add(r);
+                    Imgproc.drawContours(imag, contours, maxAreaIdx, new Scalar(0, 0, 255));
+                    Imgproc.drawContours(imag2, contours, maxAreaIdx, new Scalar(0, 0, 255));
+                }
             }
         }
         v.release();
