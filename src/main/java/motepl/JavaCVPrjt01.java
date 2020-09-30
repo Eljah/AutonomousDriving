@@ -24,6 +24,7 @@ public class JavaCVPrjt01 {
     static MatOfPoint2f correctCrossingArea2f = null;
     static MatOfPoint incorrectCrossingArea = null;
     static MatOfPoint2f incorrectCrossingArea2f = null;
+    static int counterSinceLastDetection = 15;
 
     static {
         //System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -234,6 +235,12 @@ public class JavaCVPrjt01 {
         Rect r = null;
         ArrayList<Rect> rect_array = new ArrayList<Rect>();
 
+        int movingContourCount = 0;
+        int objectsMoving = 0;
+        int detectedFactsMin = 3;
+        final int detectedFactsMax = 15;
+
+
         for (int idx = 0; idx < contours.size(); idx++) {
             Mat contour = contours.get(idx);
             double contourarea = Imgproc.contourArea(contour);
@@ -262,13 +269,22 @@ public class JavaCVPrjt01 {
                                     Imgproc.pointPolygonTest(incorrectCrossingArea2f, new Point(rX2, rY1), true) >= 0 ||
                                     Imgproc.pointPolygonTest(incorrectCrossingArea2f, massCenterMatOfPoint2f(contour), true) >= 0 ||
                                     Imgproc.pointPolygonTest(correctCrossingArea2f, massCenterMatOfPoint2f(contour), true) >= 0
-                            )
-                    rect_array.add(r);
-                    Imgproc.drawContours(imag, contours, maxAreaIdx, new Scalar(0, 0, 255));
-                    Imgproc.drawContours(imag2, contours, maxAreaIdx, new Scalar(0, 0, 255));
+                            ) {
+                        rect_array.add(r);
+                        Imgproc.drawContours(imag, contours, maxAreaIdx, new Scalar(0, 0, 255));
+                        Imgproc.drawContours(imag2, contours, maxAreaIdx, new Scalar(0, 0, 255));
+
+                        //new movement started
+                        movingContourCount = rect_array.size();
+                        counterSinceLastDetection = detectedFactsMax;
+                    }
                 }
             }
         }
+        if (counterSinceLastDetection > 0) {
+            counterSinceLastDetection--;
+        }
+        System.out.println("Detected counters in total: " + movingContourCount + "(" + counterSinceLastDetection + ")");
         v.release();
 
         return rect_array;
