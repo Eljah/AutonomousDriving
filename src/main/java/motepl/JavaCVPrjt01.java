@@ -147,6 +147,19 @@ public class JavaCVPrjt01 {
                         }
 
                     }
+
+                    //areas of interest:
+
+                    //Drawing an arrowed line
+                    MatOfPoint points = new MatOfPoint (
+                            new Point(470, 580), new Point(470, 560), new Point(590, 550),
+                            new Point(900, 595), new Point(700, 620),
+                            new Point(470, 580)
+                    );
+                    List<MatOfPoint> matOfPointList =  new ArrayList<>();
+                    matOfPointList.add(points);
+                    Imgproc.drawContours(imag, matOfPointList, -1, new Scalar(0, 255, 255));
+                    Imgproc.drawContours(imag2, matOfPointList, -1, new Scalar(0, 255, 255));
                 }
                 i = 1;
 
