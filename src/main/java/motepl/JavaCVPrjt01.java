@@ -105,13 +105,21 @@ public class JavaCVPrjt01 {
                     Mat noice = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 1,3));
                     Mat car = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 100,30));
                     Mat man = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 20,90));
-                    Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 53,13));
+
+                    //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 53,13));
+                    //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 40,20));
+
+                    Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 40,30));
+
                     // Apply morphology operations
                     //Imgproc.erode(diff_frame, diff_frame, car);
                     //Imgproc.dilate(diff_frame, diff_frame, verticalStructure);
                     //Imgproc.morphologyEx(diff_frame,diff_frame, Imgproc.MORPH_GRADIENT, man);
+
+
                     Imgproc.morphologyEx(diff_frame,diff_frame, Imgproc.MORPH_BLACKHAT, blackhat);
-                    //Imgproc.dilate(diff_frame, diff_frame, man);
+
+                    /// /Imgproc.dilate(diff_frame, diff_frame, man);
 
                     //Imgproc.dilate(diff_frame, diff_frame,thicken);
                     //Imgproc.erode(diff_frame, diff_frame, horisontal);
@@ -179,7 +187,8 @@ public class JavaCVPrjt01 {
         Imgproc.findContours(vv, contours, v, Imgproc.RETR_LIST,
                 Imgproc.CHAIN_APPROX_SIMPLE);
 
-        double maxArea = 100;
+        double maxArea = 1000;
+        double minArea = 400;
         int maxAreaIdx = -1;
         Rect r = null;
         ArrayList<Rect> rect_array = new ArrayList<Rect>();
@@ -187,7 +196,7 @@ public class JavaCVPrjt01 {
         for (int idx = 0; idx < contours.size(); idx++) {
             Mat contour = contours.get(idx);
             double contourarea = Imgproc.contourArea(contour);
-            if (contourarea > maxArea) {
+            if (contourarea > minArea && contourarea < maxArea) {
                 // maxArea = contourarea;
                 maxAreaIdx = idx;
                 r = Imgproc.boundingRect(contours.get(maxAreaIdx));
