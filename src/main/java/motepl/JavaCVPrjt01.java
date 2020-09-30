@@ -25,7 +25,9 @@ public class JavaCVPrjt01 {
     static MatOfPoint incorrectCrossingArea = null;
     static MatOfPoint2f incorrectCrossingArea2f = null;
     static int counterSinceLastDetection = 15;
+    static int counterRegistration = 0;
     final static int counterSinceLastDetectionMax = 15;
+    final static int counterForRegistrationMax = 3;
     static int contoursCount = 0;
     static int olderContoursCount = 0;
     static int olderCounterSinceLastDetection = 0;
@@ -160,11 +162,15 @@ public class JavaCVPrjt01 {
                     Imgproc.cvtColor(diff_frame, tempon_frame2, Imgproc.COLOR_GRAY2BGR);
                     imag2 = tempon_frame2;
 
-                    Scalar green =  new Scalar(0, 255, 0);
+                    Scalar green = null;
 
                     if (isMotionContinuationDetected())
                     {
                         green =  new Scalar(255, 255, 0);
+                    }
+                    if (isMotionStartDetected())
+                    {
+                        green =  new Scalar(0, 255, 0);
                     }
 
                     if (array.size() > 0) {
@@ -313,17 +319,27 @@ public class JavaCVPrjt01 {
 
     public static boolean isMotionContinuationDetected() {
         boolean toBeReturned = false;
-        toBeReturned= contoursCount >= olderContoursCount
-                && counterSinceLastDetection > olderCounterSinceLastDetection
+        toBeReturned= contoursCount >= 1
+                && counterSinceLastDetection >= olderCounterSinceLastDetection
                 && olderCounterSinceLastDetection>0;
-        System.out.println(contoursCount+"/"+olderContoursCount+"/"+counterSinceLastDetection+"/"+olderCounterSinceLastDetection);
-        if (toBeReturned) {System.out.println("CONT");}
+        System.out.println(contoursCount+"/"+olderContoursCount+"/"+counterSinceLastDetection+"/"+olderCounterSinceLastDetection+"/"+counterRegistration);
+        if (toBeReturned) {
+            System.out.println("CONT");
+            counterRegistration++;
+        }
         return toBeReturned;
     }
 
     public static boolean isMotionStartDetected() {
-        return contoursCount > olderContoursCount
+        boolean toBeReturned = false;
+        toBeReturned=  contoursCount >= olderContoursCount
                 && counterSinceLastDetection > olderCounterSinceLastDetection
                 && olderCounterSinceLastDetection==0;
+        System.out.println(contoursCount+"/"+olderContoursCount+"/"+counterSinceLastDetection+"/"+olderCounterSinceLastDetection+"/"+counterRegistration);
+        if (toBeReturned) {
+            System.out.println("START");
+            counterRegistration=0;
+        }
+        return toBeReturned;
     }
 }

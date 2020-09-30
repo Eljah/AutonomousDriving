@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fbc7d0f8-44e7-4f9d-b1ec-9bdd4addd6d9" name="Default" comment="">
+    <list default="true" id="fbc7d0f8-44e7-4f9d-b1ec-9bdd4addd6d9" name="Default" comment="correclty detected first and second images">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/motepl/JavaCVPrjt01.java" afterPath="$PROJECT_DIR$/src/main/java/motepl/JavaCVPrjt01.java" />
     </list>
@@ -42,13 +42,13 @@
       <file leaf-file-name="JavaCVPrjt01.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/motepl/JavaCVPrjt01.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.33275563">
-              <caret line="253" column="0" selection-start-line="253" selection-start-column="0" selection-end-line="253" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.8526863">
+              <caret line="327" column="34" selection-start-line="327" selection-start-column="34" selection-end-line="327" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#9705#9717#0" expanded="true" />
-                <element signature="e#10162#10168#0" expanded="true" />
-                <marker date="1601496412729" expanded="true" signature="11142:11956" placeholder="..." />
+                <element signature="e#9928#9940#0" expanded="true" />
+                <element signature="e#10385#10391#0" expanded="true" />
+                <marker date="1601498160114" expanded="true" signature="11365:12179" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -1095,7 +1095,7 @@
       <workItem from="1601394525606" duration="4809000" />
       <workItem from="1601416216950" duration="2947000" />
       <workItem from="1601444276447" duration="13192000" />
-      <workItem from="1601472696234" duration="21568000" />
+      <workItem from="1601472696234" duration="23835000" />
     </task>
     <task id="LOCAL-00001" summary="test searching motions">
       <created>1601468422641</created>
@@ -1163,11 +1163,17 @@
       <option name="project" value="LOCAL" />
       <updated>1601494937144</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="correclty detected first and second images">
+      <created>1601496581170</created>
+      <option name="number" value="00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1601496581170</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="40986000" />
+    <option name="totallyTimeSpent" value="43253000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="0" />
@@ -1175,12 +1181,12 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32887402" sideWeight="0.16151386" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32887402" sideWeight="0.15618336" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32552955" sideWeight="0.7057569" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32552955" sideWeight="0.7137527" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34488273" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32552955" sideWeight="0.29424307" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32552955" sideWeight="0.28624734" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32998884" sideWeight="0.4978678" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -1221,7 +1227,8 @@
     <MESSAGE value="frames only for area of interest" />
     <MESSAGE value="frames only for area of interest + center of mass also inside the area of interest" />
     <MESSAGE value="introducing counters to trigger contour events" />
-    <option name="LAST_COMMIT_MESSAGE" value="introducing counters to trigger contour events" />
+    <MESSAGE value="correclty detected first and second images" />
+    <option name="LAST_COMMIT_MESSAGE" value="correclty detected first and second images" />
   </component>
   <component name="WindowStateProjectService">
     <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1601406540278">
@@ -1313,9 +1320,9 @@
           <caret line="21" column="13" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#9705#9717#0" expanded="true" />
-            <element signature="e#10162#10168#0" expanded="true" />
-            <marker date="1601496412729" expanded="true" signature="11142:11956" placeholder="..." />
+            <element signature="e#9928#9940#0" expanded="true" />
+            <element signature="e#10385#10391#0" expanded="true" />
+            <marker date="1601498160114" expanded="true" signature="11365:12179" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -1365,9 +1372,9 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#9705#9717#0" expanded="true" />
-            <element signature="e#10162#10168#0" expanded="true" />
-            <marker date="1601496412729" expanded="true" signature="11142:11956" placeholder="..." />
+            <element signature="e#9928#9940#0" expanded="true" />
+            <element signature="e#10385#10391#0" expanded="true" />
+            <marker date="1601498160114" expanded="true" signature="11365:12179" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -2555,13 +2562,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/motepl/JavaCVPrjt01.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33275563">
-          <caret line="253" column="0" selection-start-line="253" selection-start-column="0" selection-end-line="253" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.8526863">
+          <caret line="327" column="34" selection-start-line="327" selection-start-column="34" selection-end-line="327" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#9705#9717#0" expanded="true" />
-            <element signature="e#10162#10168#0" expanded="true" />
-            <marker date="1601496412729" expanded="true" signature="11142:11956" placeholder="..." />
+            <element signature="e#9928#9940#0" expanded="true" />
+            <element signature="e#10385#10391#0" expanded="true" />
+            <marker date="1601498160114" expanded="true" signature="11365:12179" placeholder="..." />
           </folding>
         </state>
       </provider>
