@@ -69,7 +69,7 @@ public class JavaCVPrjt01 {
 
         while (true) {
             frames++;
-            if (frames == 10) {
+            if (frames == 5) {
                 if (camera.read(frame)) {
                 frames = 0;
                 Imgproc.resize(frame, frame, sz);
@@ -78,7 +78,7 @@ public class JavaCVPrjt01 {
                 //diff_frame2 = frame.clone();
 
                 Imgproc.cvtColor(frame, outerBox, Imgproc.COLOR_BGR2GRAY);
-                Imgproc.GaussianBlur(outerBox, outerBox, new Size(9, 9), 0);
+                Imgproc.GaussianBlur(outerBox, outerBox, new Size(5, 5), 0);
                 ArrayList<Rect> array = new ArrayList<Rect>();
                 //Photo.fastNlMeansDenoising(outerBox, outerBox,5,3,3);
                 if (i == 0) {
@@ -89,11 +89,35 @@ public class JavaCVPrjt01 {
                 }
 
                 if (i == 1) {
+                    diff_frame = tempon_frame;
                     Core.subtract(outerBox, tempon_frame, diff_frame);
                     Imgproc.adaptiveThreshold(diff_frame, diff_frame, 1000,//255,
                             Imgproc.ADAPTIVE_THRESH_MEAN_C,
                             Imgproc.THRESH_BINARY_INV, 5, 2);
                     //imag2 = diff_frame;
+
+                    // Specify size on vertical axis
+                    int vertical_size = 5;
+                    // Create structure element for extracting vertical lines through morphology operations
+                    Mat verticalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 1,vertical_size));
+                    Mat thicken = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 3,20));
+                    Mat horisontalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( vertical_size,1));
+                    Mat noice = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 1,3));
+                    Mat car = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 100,30));
+                    Mat man = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 20,90));
+                    Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 53,13));
+                    // Apply morphology operations
+                    //Imgproc.erode(diff_frame, diff_frame, car);
+                    //Imgproc.dilate(diff_frame, diff_frame, verticalStructure);
+                    //Imgproc.morphologyEx(diff_frame,diff_frame, Imgproc.MORPH_GRADIENT, man);
+                    Imgproc.morphologyEx(diff_frame,diff_frame, Imgproc.MORPH_BLACKHAT, blackhat);
+                    //Imgproc.dilate(diff_frame, diff_frame, man);
+
+                    //Imgproc.dilate(diff_frame, diff_frame,thicken);
+                    //Imgproc.erode(diff_frame, diff_frame, horisontal);
+                    //Imgproc.dilate(diff_frame, diff_frame,thicken);
+                    //Imgproc.erode(diff_frame, diff_frame, noice);
+
                     array = detection_contours(diff_frame);
                     tempon_frame2 = new Mat(frame.size(), CvType.CV_8UC3);
                     Imgproc.cvtColor(diff_frame, tempon_frame2, Imgproc.COLOR_GRAY2BGR);
