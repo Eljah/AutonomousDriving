@@ -98,6 +98,7 @@ public class JavaCVPrjt01 {
 
         System.out.println(camera.isOpened());
         camera.open("D:/Downloads/video5.mp4");
+        //camera.open(0);
         //camera.open("resources\\videoSample.mp4");
         System.out.println(camera.isOpened());
 
@@ -241,8 +242,8 @@ public class JavaCVPrjt01 {
                         Iterator<Rect> it3 = array.iterator();
                         while (it3.hasNext()) {
                             Rect obj = it3.next();
-
-                            if (Imgproc.pointPolygonTest(correctCrossingArea2f, new Point((obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2), true) >= 0) {
+                            Point objectPoint=new Point((obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2);
+                            if (Imgproc.pointPolygonTest(correctCrossingArea2f, objectPoint, true) >= 0) {
                                 Core.putText(
                                         imag,                          // Matrix obj of the image
                                         "CORRECT AREA",          // Text to be added
@@ -252,10 +253,20 @@ public class JavaCVPrjt01 {
                                         new Scalar(0, 0, 0),             // Scalar object for color
                                         4                                // Thickness
                                 );
+                                Core.putText(
+                                        imag,                          // Matrix obj of the image
+                                        "X="+objectPoint.x+" Y="+objectPoint.y,          // Text to be added
+                                        new Point(500, 50),               // point
+                                        Core.FONT_HERSHEY_SIMPLEX,      // front face
+                                        1,                               // front scale
+                                        new Scalar(0, 0, 0),             // Scalar object for color
+                                        4                                // Thickness
+                                );
+
                                 correctCrossing.add(new Crossing(humanVision = Mat2bufferedImage(imag), (obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2, currentTimestamp));
                             }
 
-                            if (Imgproc.pointPolygonTest(incorrectCrossingArea2f, new Point((obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2), true) >= 0) {
+                            if (Imgproc.pointPolygonTest(incorrectCrossingArea2f, objectPoint, true) >= 0) {
                                 Core.putText(
                                         imag,                          // Matrix obj of the image
                                         "INCORRECT AREA",          // Text to be added
@@ -265,6 +276,16 @@ public class JavaCVPrjt01 {
                                         new Scalar(0, 0, 0),             // Scalar object for color
                                         4                                // Thickness
                                 );
+                                Core.putText(
+                                        imag,                          // Matrix obj of the image
+                                        "X="+objectPoint.x+" Y="+objectPoint.y,          // Text to be added
+                                        new Point(500, 50),               // point
+                                        Core.FONT_HERSHEY_SIMPLEX,      // front face
+                                        1,                               // front scale
+                                        new Scalar(0, 0, 0),             // Scalar object for color
+                                        4                                // Thickness
+                                );
+
                                 incorrectCrossing.add(new Crossing(humanVision = Mat2bufferedImage(imag), (obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2, currentTimestamp));
                             }
 
@@ -498,7 +519,7 @@ public class JavaCVPrjt01 {
         Set<Crossing> incorrectCrossingList = new HashSet<>();// = incorrectCrossing.stream().collect(Collectors.toList());
         List<CrossingPair> incorrectCrossingPairsList = new LinkedList<>();
         incorrectCrossing.stream().reduce( (y, z) -> {
-                    if ((z.timestamp - y.timestamp) > 200 && (z.timestamp - y.timestamp) < 1500) {
+                    if ((z.timestamp - y.timestamp) > 150 && (z.timestamp - y.timestamp) < 2000) {
                         incorrectCrossingList.add(y);
                         incorrectCrossingList.add(z);
                         CrossingPair crossingPair = new CrossingPair(y, z);
@@ -534,7 +555,7 @@ public class JavaCVPrjt01 {
         Set<Crossing> correctCrossingList = new HashSet<>();// correctCrossing.stream().collect(Collectors.toList());
         List<CrossingPair> correctCrossingPairsList = new LinkedList<>();
         correctCrossing.stream().reduce( (y, z) -> {
-                    if ((z.timestamp - y.timestamp) > 200 && (z.timestamp - y.timestamp) < 1500) {
+                    if ((z.timestamp - y.timestamp) > 150 && (z.timestamp - y.timestamp) < 4000) {
                         correctCrossingList.add(y);
                         correctCrossingList.add(z);
                         CrossingPair crossingPair = new CrossingPair(y, z);
