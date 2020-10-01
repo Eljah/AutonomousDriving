@@ -1,5 +1,6 @@
 package motepl;
 
+import com.google.common.collect.EvictingQueue;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.highgui.Highgui;
@@ -16,10 +17,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JavaCVPrjt01 {
     static VideoCapture camera;
@@ -41,6 +41,9 @@ public class JavaCVPrjt01 {
     static List<Double> coordinatesX = new ArrayList<>();
     static List<Double> coordinatesY = new ArrayList<>();
     static Date timestamp = null;
+
+    static EvictingQueue<Crossing> correctCrossing = EvictingQueue.create(30);
+    static EvictingQueue<Crossing> incorrectCrossing = EvictingQueue.create(30);
 
     static {
         //System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -66,12 +69,13 @@ public class JavaCVPrjt01 {
         //Mat mat = Mat.eye(3, 3, CvType.CV_8UC1);
         //camera = new VideoCapture("resources/videoSample.mp4");
     }
+
     public static void main(String[] args) {
         JFrame jframe = new JFrame("HUMAN MOTION DETECTOR FPS");
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JLabel vidpanel = new JLabel();
         jframe.setContentPane(vidpanel);
-        jframe.setSize(1280,720) ;
+        jframe.setSize(1280, 720);
         //jframe.setSize(400,120) ;
         jframe.setVisible(true);
 
@@ -89,7 +93,7 @@ public class JavaCVPrjt01 {
         Mat diff_frame2 = null;
         Mat tempon_frame = null;
         Mat tempon_frame2 = null;
-        Size sz = new Size(1280,720);
+        Size sz = new Size(1280, 720);
         //Size sz = new Size(400,120);
 
 
@@ -106,139 +110,181 @@ public class JavaCVPrjt01 {
             frames++;
             if (frames == 5) {
                 if (camera.read(frame)) {
-                frames = 0;
-                Imgproc.resize(frame, frame, sz);
-                imag = frame.clone();
-                outerBox = new Mat(frame.size(), CvType.CV_8UC1);
-                //diff_frame2 = frame.clone();
+                    frames = 0;
+                    Imgproc.resize(frame, frame, sz);
+                    imag = frame.clone();
+                    outerBox = new Mat(frame.size(), CvType.CV_8UC1);
+                    //diff_frame2 = frame.clone();
 
-                Imgproc.cvtColor(frame, outerBox, Imgproc.COLOR_BGR2GRAY);
-                Imgproc.GaussianBlur(outerBox, outerBox, new Size(5, 5), 0);
-                ArrayList<Rect> array = new ArrayList<Rect>();
-                //Photo.fastNlMeansDenoising(outerBox, outerBox,5,3,3);
-                if (i == 0) {
-                    jframe.setSize(frame.width(), frame.height());
-                    //diff_frame = new Mat(outerBox.size(), CvType.CV_8UC1);                    /
-                    diff_frame = outerBox.clone();
-                    imag2 = diff_frame;
-                }
-
-                if (i == 1) {
-                    diff_frame = tempon_frame;
-                    Core.subtract(outerBox, tempon_frame, diff_frame);
-                    Imgproc.adaptiveThreshold(diff_frame, diff_frame, 1000,//255,
-                            Imgproc.ADAPTIVE_THRESH_MEAN_C,
-                            Imgproc.THRESH_BINARY_INV, 5, 2);
-                    //imag2 = diff_frame;
-
-                    // Specify size on vertical axis
-                    int vertical_size = 5;
-                    // Create structure element for extracting vertical lines through morphology operations
-                    Mat verticalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 1,vertical_size));
-                    Mat thicken = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 3,20));
-                    Mat horisontalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( vertical_size,1));
-                    Mat noice = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 1,3));
-                    Mat car = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(200, 40));
-                    Mat man = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 20,90));
-
-
-                    //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 53,13));
-                    //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 40,20));
-
-                    Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 40,30));
-
-                    // Apply morphology operations
-                    //Imgproc.erode(diff_frame, diff_frame, car);
-                    //Imgproc.dilate(diff_frame, diff_frame, verticalStructure);
-                    //Imgproc.morphologyEx(diff_frame,diff_frame, Imgproc.MORPH_GRADIENT, man);
-
-
-                    Imgproc.morphologyEx(diff_frame,diff_frame, Imgproc.MORPH_BLACKHAT, blackhat);
-
-                    /// /Imgproc.dilate(diff_frame, diff_frame, man);
-
-
-                    //Imgproc.dilate(diff_frame, diff_frame, car);
-                    //Imgproc.erode(diff_frame, diff_frame, car);
-
-                    //Imgproc.dilate(diff_frame, diff_frame, man);
-                    //Imgproc.erode(diff_frame, diff_frame, man);
-                    //Imgproc.dilate(diff_frame, diff_frame,thicken);
-                    //Imgproc.erode(diff_frame, diff_frame, noice);
-
-                    array = detection_contours(diff_frame);
-                    tempon_frame2 = new Mat(frame.size(), CvType.CV_8UC3);
-                    Imgproc.cvtColor(diff_frame, tempon_frame2, Imgproc.COLOR_GRAY2BGR);
-                    imag2 = tempon_frame2;
-
-                    Scalar green = null;
-                    int frameThikness = 1;
-
-                    if (isMotionContinuationDetected())
-                    {
-                        green =  new Scalar(255, 255, 0);
-                        frameThikness = 1;
-                    }
-                    if (isMotionStartDetected())
-                    {
-                        green =  new Scalar(0, 255, 0);
-                        frameThikness = 3;
+                    Imgproc.cvtColor(frame, outerBox, Imgproc.COLOR_BGR2GRAY);
+                    Imgproc.GaussianBlur(outerBox, outerBox, new Size(5, 5), 0);
+                    ArrayList<Rect> array = new ArrayList<Rect>();
+                    //Photo.fastNlMeansDenoising(outerBox, outerBox,5,3,3);
+                    if (i == 0) {
+                        jframe.setSize(frame.width(), frame.height());
+                        //diff_frame = new Mat(outerBox.size(), CvType.CV_8UC1);                    /
+                        diff_frame = outerBox.clone();
+                        imag2 = diff_frame;
                     }
 
-                    if (array.size() > 0) {
+                    if (i == 1) {
+                        diff_frame = tempon_frame;
+                        Core.subtract(outerBox, tempon_frame, diff_frame);
+                        Imgproc.adaptiveThreshold(diff_frame, diff_frame, 1000,//255,
+                                Imgproc.ADAPTIVE_THRESH_MEAN_C,
+                                Imgproc.THRESH_BINARY_INV, 5, 2);
+                        //imag2 = diff_frame;
 
-                        Iterator<Rect> it2 = array.iterator();
-                        while (it2.hasNext()) {
-                            Rect obj = it2.next();
-                            Core.rectangle(imag, obj.br(), obj.tl(),
-                                    green, frameThikness);
-                            Core.rectangle(imag2, obj.br(), obj.tl(),
-                                   green, frameThikness);
+                        // Specify size on vertical axis
+                        int vertical_size = 5;
+                        // Create structure element for extracting vertical lines through morphology operations
+                        Mat verticalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, vertical_size));
+                        Mat thicken = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 20));
+                        Mat horisontalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(vertical_size, 1));
+                        Mat noice = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 3));
+                        Mat car = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(200, 40));
+                        Mat man = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(20, 90));
+
+
+                        //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 53,13));
+                        //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 40,20));
+
+                        Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(40, 30));
+
+                        // Apply morphology operations
+                        //Imgproc.erode(diff_frame, diff_frame, car);
+                        //Imgproc.dilate(diff_frame, diff_frame, verticalStructure);
+                        //Imgproc.morphologyEx(diff_frame,diff_frame, Imgproc.MORPH_GRADIENT, man);
+
+
+                        Imgproc.morphologyEx(diff_frame, diff_frame, Imgproc.MORPH_BLACKHAT, blackhat);
+
+                        /// /Imgproc.dilate(diff_frame, diff_frame, man);
+
+
+                        //Imgproc.dilate(diff_frame, diff_frame, car);
+                        //Imgproc.erode(diff_frame, diff_frame, car);
+
+                        //Imgproc.dilate(diff_frame, diff_frame, man);
+                        //Imgproc.erode(diff_frame, diff_frame, man);
+                        //Imgproc.dilate(diff_frame, diff_frame,thicken);
+                        //Imgproc.erode(diff_frame, diff_frame, noice);
+
+                        array = detection_contours(diff_frame);
+                        tempon_frame2 = new Mat(frame.size(), CvType.CV_8UC3);
+                        Imgproc.cvtColor(diff_frame, tempon_frame2, Imgproc.COLOR_GRAY2BGR);
+                        imag2 = tempon_frame2;
+
+                        Scalar green = null;
+                        int frameThikness = 1;
+
+                        if (isMotionContinuationDetected()) {
+                            green = new Scalar(0, 255, 0);
+                            frameThikness = 1;
+                        }
+                        if (isMotionStartDetected()) {
+                            green = new Scalar(255, 0, 255);
+                            frameThikness = 1;
                         }
 
-                    }
+                        if (array.size() > 0) {
 
-                    //areas of interest:
+                            Iterator<Rect> it2 = array.iterator();
+                            while (it2.hasNext()) {
+                                Rect obj = it2.next();
+                                Core.rectangle(imag, obj.br(), obj.tl(),
+                                        green, frameThikness);
+                                Core.rectangle(imag2, obj.br(), obj.tl(),
+                                        green, frameThikness);
+                            }
 
-                    //Drawing an arrowed line
-
-                    List<MatOfPoint> matOfPointListCorrect = new ArrayList<>();
-                    matOfPointListCorrect.add(correctCrossingArea);
-
-                    List<MatOfPoint> matOfPointListIncorrect = new ArrayList<>();
-                    matOfPointListIncorrect.add(incorrectCrossingArea);
-
-                    Imgproc.drawContours(imag, matOfPointListCorrect, -1, new Scalar(0, 255, 255));
-                    Imgproc.drawContours(imag2, matOfPointListCorrect, -1, new Scalar(0, 255, 255));
-
-                    Imgproc.drawContours(imag, matOfPointListIncorrect, -1, new Scalar(255, 255, 0));
-                    Imgproc.drawContours(imag2, matOfPointListIncorrect, -1, new Scalar(255, 255, 0));
-                }
-                i = 1;
-
-                    BufferedImage humanVision = Mat2bufferedImage(imag);
-                    if (array.size() > 0) {
-                        try {
-                            saveIfNeeded(humanVision, (array.get(0).br().x+array.get(0).x)/2, (array.get(0).br().y+array.get(0).y)/2
-                            );
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
 
+                        //areas of interest:
+
+                        //Drawing an arrowed line
+
+                        List<MatOfPoint> matOfPointListCorrect = new ArrayList<>();
+                        matOfPointListCorrect.add(correctCrossingArea);
+
+                        List<MatOfPoint> matOfPointListIncorrect = new ArrayList<>();
+                        matOfPointListIncorrect.add(incorrectCrossingArea);
+
+                        Imgproc.drawContours(imag, matOfPointListCorrect, -1, new Scalar(0, 255, 255));
+                        Imgproc.drawContours(imag2, matOfPointListCorrect, -1, new Scalar(0, 255, 255));
+
+                        Imgproc.drawContours(imag, matOfPointListIncorrect, -1, new Scalar(255, 255, 0));
+                        Imgproc.drawContours(imag2, matOfPointListIncorrect, -1, new Scalar(255, 255, 0));
+                    }
+                    i = 1;
+
+                    long currentTimestamp = new Date().getTime();
+
+                    // Adding Text
+                    Core.putText (
+                            imag,                          // Matrix obj of the image
+                            currentTimestamp+"",          // Text to be added
+                            new Point(10, 50),               // point
+                            Core.FONT_HERSHEY_SIMPLEX ,      // front face
+                            1,                               // front scale
+                            new Scalar(0, 0, 0),             // Scalar object for color
+                            4                                // Thickness
+                    );
+
+                    BufferedImage humanVision;// = Mat2bufferedImage(imag);
+                    if (array.size() > 0) {
+//                        try {
+//                            saveIfNeeded(humanVision, (array.get(0).br().x + array.get(0).x) / 2, (array.get(0).br().y + array.get(0).y) / 2
+//                            );
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+                        Iterator<Rect> it3 = array.iterator();
+                        while (it3.hasNext()) {
+                            Rect obj = it3.next();
+
+                            if (Imgproc.pointPolygonTest(correctCrossingArea2f, new Point((obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2), true) >= 0) {
+                                Core.putText (
+                                        imag,                          // Matrix obj of the image
+                                        "CORRECT AREA",          // Text to be added
+                                        new Point(900, 50),               // point
+                                        Core.FONT_HERSHEY_SIMPLEX ,      // front face
+                                        1,                               // front scale
+                                        new Scalar(0, 0, 0),             // Scalar object for color
+                                        4                                // Thickness
+                                );
+                                correctCrossing.add(new Crossing(humanVision = Mat2bufferedImage(imag), (obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2, currentTimestamp));
+                            }
+
+                            if (Imgproc.pointPolygonTest(incorrectCrossingArea2f, new Point((obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2), true) >= 0) {
+                                Core.putText (
+                                        imag,                          // Matrix obj of the image
+                                        "INCORRECT AREA",          // Text to be added
+                                        new Point(900, 50),               // point
+                                        Core.FONT_HERSHEY_SIMPLEX ,      // front face
+                                        1,                               // front scale
+                                        new Scalar(0, 0, 0),             // Scalar object for color
+                                        4                                // Thickness
+                                );
+                                incorrectCrossing.add(new Crossing(humanVision = Mat2bufferedImage(imag), (obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2, currentTimestamp));
+                            }
+
+                        }
                     }
 
                     ImageIcon image = new ImageIcon(Mat2bufferedImage(imag));
-                vidpanel.setIcon(image);
-                vidpanel.repaint();
+                    vidpanel.setIcon(image);
+                    vidpanel.repaint();
 
-                ImageIcon image2 = new ImageIcon(Mat2bufferedImage(imag2));
-                vidpanel2.setIcon(image2);
-                vidpanel2.repaint();
+                    ImageIcon image2 = new ImageIcon(Mat2bufferedImage(imag2));
+                    vidpanel2.setIcon(image2);
+                    vidpanel2.repaint();
 
                     tempon_frame = outerBox.clone();
+
+                    saveIfNeeded();
                 }
-            }
-            else {
+            } else {
                 camera.read(frame);
             }
         }
@@ -344,10 +390,10 @@ public class JavaCVPrjt01 {
 
     public static boolean isMotionContinuationDetected() {
         boolean toBeReturned = false;
-        toBeReturned= contoursCount >= 1
+        toBeReturned = contoursCount >= 1
                 && counterSinceLastDetection >= olderCounterSinceLastDetection
-                && olderCounterSinceLastDetection>0;
-        System.out.println(contoursCount+"/"+olderContoursCount+"/"+counterSinceLastDetection+"/"+olderCounterSinceLastDetection+"/"+counterRegistration);
+                && olderCounterSinceLastDetection > 0;
+        System.out.println(contoursCount + "/" + olderContoursCount + "/" + counterSinceLastDetection + "/" + olderCounterSinceLastDetection + "/" + counterRegistration);
         if (toBeReturned) {
             System.out.println("CONT");
             counterRegistration++;
@@ -357,13 +403,13 @@ public class JavaCVPrjt01 {
 
     public static boolean isMotionStartDetected() {
         boolean toBeReturned = false;
-        toBeReturned=  contoursCount >= olderContoursCount
+        toBeReturned = contoursCount >= olderContoursCount
                 && counterSinceLastDetection > olderCounterSinceLastDetection
-                && olderCounterSinceLastDetection==0;
-        System.out.println(contoursCount+"/"+olderContoursCount+"/"+counterSinceLastDetection+"/"+olderCounterSinceLastDetection+"/"+counterRegistration);
+                && olderCounterSinceLastDetection == 0;
+        System.out.println(contoursCount + "/" + olderContoursCount + "/" + counterSinceLastDetection + "/" + olderCounterSinceLastDetection + "/" + counterRegistration);
         if (toBeReturned) {
             System.out.println("START");
-            counterRegistration=0;
+            counterRegistration = 0;
             images.clear();
             coordinatesX.clear();
             coordinatesY.clear();
@@ -375,14 +421,14 @@ public class JavaCVPrjt01 {
         int heightTotal = 0;
         int maxWidth = 100;
 
-        if (counterRegistration == 1 && images.size()==0) {
+        if (counterRegistration == 1 && images.size() == 0) {
             System.out.println("ADDING 1!");
             timestamp = new Date();
             images.add(image);
             coordinatesX.add(xCoordinate);
             coordinatesY.add(yCoordinate);
         }
-        if (counterRegistration == 2 && images.size()==1) {
+        if (counterRegistration == 2 && images.size() == 1) {
             System.out.println("ADDING 2!");
             images.add(image);
             coordinatesX.add(xCoordinate);
@@ -416,7 +462,7 @@ public class JavaCVPrjt01 {
                 heightCurr += bufferedImage.getHeight();
             }
 
-            File compressedImageFile = new File("D:\\downloads\\crossing" + timestamp.getTime()+".jpg");
+            File compressedImageFile = new File("D:\\downloads\\crossing" + timestamp.getTime() + ".jpg");
             OutputStream outputStream = new FileOutputStream(compressedImageFile);
 
 
@@ -446,5 +492,114 @@ public class JavaCVPrjt01 {
             images.clear();
             coordinatesX.clear();
         }
+    }
+
+    public static void saveIfNeeded() {
+        System.out.println("INCORRECT: " + incorrectCrossing.stream().count());
+        Set<Crossing> incorrectCrossingList = new HashSet<>();// = incorrectCrossing.stream().collect(Collectors.toList());
+        List<CrossingPair> incorrectCrossingPairsList = new LinkedList<>();
+        incorrectCrossing.stream().reduce(incorrectCrossing.peek(), (y, z) -> {
+                    if ((z.timestamp - y.timestamp) > 500 && (z.timestamp - y.timestamp) < 1500) {
+                        incorrectCrossingList.add(y);
+                        incorrectCrossingList.add(z);
+                        CrossingPair crossingPair=new CrossingPair(y,z);
+                        incorrectCrossingPairsList.add(crossingPair);
+                    }
+                    return z;
+                }
+        );
+        System.out.println("INCORRECT ONE TRACE: " + incorrectCrossingList.size());
+        System.out.println("INCORRECT ONE TRACE PAIRS: " + incorrectCrossingPairsList.size());
+        System.out.println("CORRECT: " + correctCrossing.stream().count());
+        Set<Crossing> correctCrossingList = new HashSet<>();// correctCrossing.stream().collect(Collectors.toList());
+        List<CrossingPair> correctCrossingPairsList = new LinkedList<>();
+        correctCrossing.stream().reduce(correctCrossing.peek(), (y, z) -> {
+                    if ((z.timestamp - y.timestamp) > 500 && (z.timestamp - y.timestamp) < 1500) {
+                        correctCrossingList.add(y);
+                        correctCrossingList.add(z);
+                        CrossingPair crossingPair=new CrossingPair(y,z);
+                        correctCrossingPairsList.add(crossingPair);
+                    }
+                    return z;
+                }
+        );
+        System.out.println("CORRECT ONE TRACE: " + correctCrossingList.size());
+        System.out.println("CORRECT ONE TRACE PAIRS: " + correctCrossingPairsList.size());
+        if (correctCrossingPairsList.size()>1) {
+            try {
+                saveThreeImage(correctCrossingPairsList.get(0),correctCrossingPairsList.get(1), true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (incorrectCrossingPairsList.size()>1) {
+            try {
+                saveThreeImage(incorrectCrossingPairsList.get(0),incorrectCrossingPairsList.get(1), false);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void saveThreeImage(CrossingPair one, CrossingPair two, boolean correct) throws IOException {
+        BufferedImage oneImage=one.one.bufferedImage;
+        BufferedImage twoImage=one.two.bufferedImage;
+        BufferedImage twoImage_=two.one.bufferedImage;
+        BufferedImage threeImage=two.two.bufferedImage;
+        System.out.println("EQ CHECK: "+twoImage.equals(twoImage_));
+        Long timestamp = one.two.timestamp;
+
+        List<BufferedImage> imagesList = new LinkedList<>();
+        imagesList.add(oneImage);
+        imagesList.add(twoImage);
+        imagesList.add(threeImage);
+
+        int heightTotal = 0;
+        int maxWidth = 100;
+
+        for (BufferedImage bufferedImage : imagesList) {
+            heightTotal += bufferedImage.getHeight();
+            if (bufferedImage.getWidth() > maxWidth) {
+                maxWidth = bufferedImage.getWidth();
+            }
+        }
+
+
+        int heightCurr = 0;
+        BufferedImage concatImage = new BufferedImage(maxWidth, heightTotal, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = concatImage.createGraphics();
+        for (BufferedImage bufferedImage : imagesList) {
+            g2d.drawImage(bufferedImage, 0, heightCurr, null);
+            heightCurr += bufferedImage.getHeight();
+        }
+
+        File compressedImageFile = new File("D:\\downloads\\crossing_"+(correct?"CORRECT":"INCORRECT")+"_" + timestamp + ".jpg");
+        OutputStream outputStream = new FileOutputStream(compressedImageFile);
+
+
+        float imageQuality = 0.9f;
+        Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName("jpeg");
+
+        if (!imageWriters.hasNext())
+            throw new IllegalStateException("Writers Not Found!!");
+
+        ImageWriter imageWriter = imageWriters.next();
+        ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream);
+        imageWriter.setOutput(imageOutputStream);
+
+        ImageWriteParam imageWriteParam = imageWriter.getDefaultWriteParam();
+
+        //Set the compress quality metrics
+        imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        imageWriteParam.setCompressionQuality(imageQuality);
+
+        //Created image
+        imageWriter.write(null, new IIOImage(concatImage, null, null), imageWriteParam);
+
+        // close all streams
+        outputStream.close();
+        imageOutputStream.close();
+        imageWriter.dispose();
     }
 }
