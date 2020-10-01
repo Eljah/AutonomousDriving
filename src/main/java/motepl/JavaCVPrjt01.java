@@ -19,7 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class JavaCVPrjt01 {
     static VideoCapture camera;
@@ -221,11 +220,11 @@ public class JavaCVPrjt01 {
                     long currentTimestamp = new Date().getTime();
 
                     // Adding Text
-                    Core.putText (
+                    Core.putText(
                             imag,                          // Matrix obj of the image
-                            currentTimestamp+"",          // Text to be added
+                            currentTimestamp + "",          // Text to be added
                             new Point(10, 50),               // point
-                            Core.FONT_HERSHEY_SIMPLEX ,      // front face
+                            Core.FONT_HERSHEY_SIMPLEX,      // front face
                             1,                               // front scale
                             new Scalar(0, 0, 0),             // Scalar object for color
                             4                                // Thickness
@@ -244,11 +243,11 @@ public class JavaCVPrjt01 {
                             Rect obj = it3.next();
 
                             if (Imgproc.pointPolygonTest(correctCrossingArea2f, new Point((obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2), true) >= 0) {
-                                Core.putText (
+                                Core.putText(
                                         imag,                          // Matrix obj of the image
                                         "CORRECT AREA",          // Text to be added
                                         new Point(900, 50),               // point
-                                        Core.FONT_HERSHEY_SIMPLEX ,      // front face
+                                        Core.FONT_HERSHEY_SIMPLEX,      // front face
                                         1,                               // front scale
                                         new Scalar(0, 0, 0),             // Scalar object for color
                                         4                                // Thickness
@@ -257,11 +256,11 @@ public class JavaCVPrjt01 {
                             }
 
                             if (Imgproc.pointPolygonTest(incorrectCrossingArea2f, new Point((obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2), true) >= 0) {
-                                Core.putText (
+                                Core.putText(
                                         imag,                          // Matrix obj of the image
                                         "INCORRECT AREA",          // Text to be added
                                         new Point(900, 50),               // point
-                                        Core.FONT_HERSHEY_SIMPLEX ,      // front face
+                                        Core.FONT_HERSHEY_SIMPLEX,      // front face
                                         1,                               // front scale
                                         new Scalar(0, 0, 0),             // Scalar object for color
                                         4                                // Thickness
@@ -499,11 +498,27 @@ public class JavaCVPrjt01 {
         Set<Crossing> incorrectCrossingList = new HashSet<>();// = incorrectCrossing.stream().collect(Collectors.toList());
         List<CrossingPair> incorrectCrossingPairsList = new LinkedList<>();
         incorrectCrossing.stream().reduce(incorrectCrossing.peek(), (y, z) -> {
-                    if ((z.timestamp - y.timestamp) > 500 && (z.timestamp - y.timestamp) < 1500) {
+                    if ((z.timestamp - y.timestamp) > 0 && (z.timestamp - y.timestamp) < 15000) {
                         incorrectCrossingList.add(y);
                         incorrectCrossingList.add(z);
-                        CrossingPair crossingPair=new CrossingPair(y,z);
+                        CrossingPair crossingPair = new CrossingPair(y, z);
                         incorrectCrossingPairsList.add(crossingPair);
+                    }
+                    return z;
+                }
+        );
+        incorrectCrossingPairsList.stream().reduce((y, z) -> {
+                    if ((z.one.x - z.two.x) / (y.one.x - y.two.x) > 0) {
+                        try {
+                            System.out.println("REMOVAL INCORRECT FROM QUEUE");
+                            incorrectCrossing.remove(z.one);
+                            incorrectCrossing.remove(z.two);
+                            incorrectCrossing.remove(y.one);
+                            incorrectCrossing.remove(y.two);
+                            saveThreeImage(z, y, false);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                     return z;
                 }
@@ -514,40 +529,56 @@ public class JavaCVPrjt01 {
         Set<Crossing> correctCrossingList = new HashSet<>();// correctCrossing.stream().collect(Collectors.toList());
         List<CrossingPair> correctCrossingPairsList = new LinkedList<>();
         correctCrossing.stream().reduce(correctCrossing.peek(), (y, z) -> {
-                    if ((z.timestamp - y.timestamp) > 500 && (z.timestamp - y.timestamp) < 1500) {
+                    if ((z.timestamp - y.timestamp) > 0 && (z.timestamp - y.timestamp) < 15000) {
                         correctCrossingList.add(y);
                         correctCrossingList.add(z);
-                        CrossingPair crossingPair=new CrossingPair(y,z);
+                        CrossingPair crossingPair = new CrossingPair(y, z);
                         correctCrossingPairsList.add(crossingPair);
+                    }
+                    return z;
+                }
+        );
+        correctCrossingPairsList.stream().reduce((y, z) -> {
+                    if ((z.one.x - z.two.x) / (y.one.x - y.two.x) > 0) {
+                        try {
+                            System.out.println("REMOVAL CORRECT FROM QUEUE");
+                            correctCrossing.remove(z.one);
+                            correctCrossing.remove(z.two);
+                            correctCrossing.remove(y.one);
+                            correctCrossing.remove(y.two);
+                            saveThreeImage(z, y, true);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                     return z;
                 }
         );
         System.out.println("CORRECT ONE TRACE: " + correctCrossingList.size());
         System.out.println("CORRECT ONE TRACE PAIRS: " + correctCrossingPairsList.size());
-        if (correctCrossingPairsList.size()>1) {
-            try {
-                saveThreeImage(correctCrossingPairsList.get(0),correctCrossingPairsList.get(1), true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (incorrectCrossingPairsList.size()>1) {
-            try {
-                saveThreeImage(incorrectCrossingPairsList.get(0),incorrectCrossingPairsList.get(1), false);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (correctCrossingPairsList.size() > 1) {
+//            try {
+//                saveThreeImage(correctCrossingPairsList.get(0), correctCrossingPairsList.get(1), true);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        if (incorrectCrossingPairsList.size() > 1) {
+//            try {
+//                saveThreeImage(incorrectCrossingPairsList.get(0), incorrectCrossingPairsList.get(1), false);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     public static void saveThreeImage(CrossingPair one, CrossingPair two, boolean correct) throws IOException {
-        BufferedImage oneImage=one.one.bufferedImage;
-        BufferedImage twoImage=one.two.bufferedImage;
-        BufferedImage twoImage_=two.one.bufferedImage;
-        BufferedImage threeImage=two.two.bufferedImage;
-        System.out.println("EQ CHECK: "+twoImage.equals(twoImage_));
+        BufferedImage oneImage = one.one.bufferedImage;
+        BufferedImage twoImage = one.two.bufferedImage;
+        BufferedImage twoImage_ = two.one.bufferedImage;
+        BufferedImage threeImage = two.two.bufferedImage;
+        System.out.println("EQ CHECK: " + twoImage.equals(twoImage_));
         Long timestamp = one.two.timestamp;
 
         List<BufferedImage> imagesList = new LinkedList<>();
@@ -574,7 +605,7 @@ public class JavaCVPrjt01 {
             heightCurr += bufferedImage.getHeight();
         }
 
-        File compressedImageFile = new File("D:\\downloads\\crossing_"+(correct?"CORRECT":"INCORRECT")+"_" + timestamp + ".jpg");
+        File compressedImageFile = new File("D:\\downloads\\crossing_" + (correct ? "CORRECT" : "INCORRECT") + "_" + timestamp + ".jpg");
         OutputStream outputStream = new FileOutputStream(compressedImageFile);
 
 
