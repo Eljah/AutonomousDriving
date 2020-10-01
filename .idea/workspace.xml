@@ -52,13 +52,13 @@
       <file leaf-file-name="JavaCVPrjt01.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/motepl/JavaCVPrjt01.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.76642334">
-              <caret line="547" column="43" selection-start-line="547" selection-start-column="43" selection-end-line="547" selection-end-column="43" />
+            <state vertical-scroll-proportion="0.3850365">
+              <caret line="500" column="94" selection-start-line="500" selection-start-column="94" selection-end-line="500" selection-end-column="94" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#14468#14480#0" expanded="true" />
                 <element signature="e#14925#14931#0" expanded="true" />
-                <marker date="1601555843912" expanded="true" signature="15905:16719" placeholder="..." />
+                <marker date="1601557774798" expanded="true" signature="15905:16719" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -1060,7 +1060,7 @@
       <workItem from="1601394525606" duration="4809000" />
       <workItem from="1601416216950" duration="2947000" />
       <workItem from="1601444276447" duration="13192000" />
-      <workItem from="1601472696234" duration="42104000" />
+      <workItem from="1601472696234" duration="43965000" />
     </task>
     <task id="LOCAL-00001" summary="test searching motions">
       <created>1601468422641</created>
@@ -1164,11 +1164,17 @@
       <option name="project" value="LOCAL" />
       <updated>1601554837589</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="calculates consequences well but sometimes wrong">
+      <created>1601556065226</created>
+      <option name="number" value="00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1601556065226</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="61522000" />
+    <option name="totallyTimeSpent" value="63383000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="0" />
@@ -1176,12 +1182,12 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32887402" sideWeight="0.12633263" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32887402" sideWeight="0.12153518" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32552955" sideWeight="0.75692964" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32552955" sideWeight="0.7654584" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34488273" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32552955" sideWeight="0.24307036" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32552955" sideWeight="0.23454158" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32998884" sideWeight="0.4978678" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -1190,7 +1196,7 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39910814" sideWeight="0.48081023" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39910814" sideWeight="0.47867805" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1227,7 +1233,8 @@
     <MESSAGE value="adding image check" />
     <MESSAGE value="saving triple image with timestamp" />
     <MESSAGE value="time consequence seems to work well" />
-    <option name="LAST_COMMIT_MESSAGE" value="time consequence seems to work well" />
+    <MESSAGE value="calculates consequences well but sometimes wrong" />
+    <option name="LAST_COMMIT_MESSAGE" value="calculates consequences well but sometimes wrong" />
   </component>
   <component name="WindowStateProjectService">
     <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1601406540278">
@@ -1249,7 +1256,21 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="73" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/motepl/JavaCVPrjt01.java</url>
+          <line>517</line>
+          <properties />
+          <option name="timeStamp" value="73" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/motepl/JavaCVPrjt01.java</url>
+          <line>554</line>
+          <properties />
+          <option name="timeStamp" value="74" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="75" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1266,7 +1287,7 @@
             <element signature="imports" expanded="true" />
             <element signature="e#14468#14480#0" expanded="true" />
             <element signature="e#14925#14931#0" expanded="true" />
-            <marker date="1601555843912" expanded="true" signature="15905:16719" placeholder="..." />
+            <marker date="1601557774798" expanded="true" signature="15905:16719" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -1318,7 +1339,7 @@
             <element signature="imports" expanded="true" />
             <element signature="e#14468#14480#0" expanded="true" />
             <element signature="e#14925#14931#0" expanded="true" />
-            <marker date="1601555843912" expanded="true" signature="15905:16719" placeholder="..." />
+            <marker date="1601557774798" expanded="true" signature="15905:16719" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -2556,13 +2577,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/motepl/JavaCVPrjt01.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.76642334">
-          <caret line="547" column="43" selection-start-line="547" selection-start-column="43" selection-end-line="547" selection-end-column="43" />
+        <state vertical-scroll-proportion="0.3850365">
+          <caret line="500" column="94" selection-start-line="500" selection-start-column="94" selection-end-line="500" selection-end-column="94" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#14468#14480#0" expanded="true" />
             <element signature="e#14925#14931#0" expanded="true" />
-            <marker date="1601555843912" expanded="true" signature="15905:16719" placeholder="..." />
+            <marker date="1601557774798" expanded="true" signature="15905:16719" placeholder="..." />
           </folding>
         </state>
       </provider>

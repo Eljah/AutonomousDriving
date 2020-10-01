@@ -497,8 +497,8 @@ public class JavaCVPrjt01 {
         System.out.println("INCORRECT: " + incorrectCrossing.stream().count());
         Set<Crossing> incorrectCrossingList = new HashSet<>();// = incorrectCrossing.stream().collect(Collectors.toList());
         List<CrossingPair> incorrectCrossingPairsList = new LinkedList<>();
-        incorrectCrossing.stream().reduce(incorrectCrossing.peek(), (y, z) -> {
-                    if ((z.timestamp - y.timestamp) > 0 && (z.timestamp - y.timestamp) < 15000) {
+        incorrectCrossing.stream().reduce( (y, z) -> {
+                    if ((z.timestamp - y.timestamp) > 200 && (z.timestamp - y.timestamp) < 1500) {
                         incorrectCrossingList.add(y);
                         incorrectCrossingList.add(z);
                         CrossingPair crossingPair = new CrossingPair(y, z);
@@ -508,14 +508,19 @@ public class JavaCVPrjt01 {
                 }
         );
         incorrectCrossingPairsList.stream().reduce((y, z) -> {
-                    if ((z.one.x - z.two.x) / (y.one.x - y.two.x) > 0) {
+                    if (    y.one.timestamp != z.two.timestamp &&
+                            y.one.timestamp < z.one.timestamp &&
+                            (z.one.x - z.two.x) / (y.one.x - y.two.x) > 0 &&
+                            (z.one.timestamp - z.two.timestamp) / (y.one.timestamp - y.two.timestamp) > 0 &&
+                            (z.one.timestamp < z.two.timestamp) && (y.one.timestamp < y.two.timestamp) && (y.two.timestamp == z.one.timestamp)
+                            ) {
                         try {
                             System.out.println("REMOVAL INCORRECT FROM QUEUE");
                             incorrectCrossing.remove(z.one);
                             incorrectCrossing.remove(z.two);
                             incorrectCrossing.remove(y.one);
                             incorrectCrossing.remove(y.two);
-                            saveThreeImage(z, y, false);
+                            saveThreeImage(y, z, false);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -528,8 +533,8 @@ public class JavaCVPrjt01 {
         System.out.println("CORRECT: " + correctCrossing.stream().count());
         Set<Crossing> correctCrossingList = new HashSet<>();// correctCrossing.stream().collect(Collectors.toList());
         List<CrossingPair> correctCrossingPairsList = new LinkedList<>();
-        correctCrossing.stream().reduce(correctCrossing.peek(), (y, z) -> {
-                    if ((z.timestamp - y.timestamp) > 0 && (z.timestamp - y.timestamp) < 15000) {
+        correctCrossing.stream().reduce( (y, z) -> {
+                    if ((z.timestamp - y.timestamp) > 200 && (z.timestamp - y.timestamp) < 1500) {
                         correctCrossingList.add(y);
                         correctCrossingList.add(z);
                         CrossingPair crossingPair = new CrossingPair(y, z);
@@ -539,20 +544,27 @@ public class JavaCVPrjt01 {
                 }
         );
         correctCrossingPairsList.stream().reduce((y, z) -> {
-                    if ((z.one.x - z.two.x) / (y.one.x - y.two.x) > 0) {
+                    if (    y.one.timestamp != z.two.timestamp &&
+                            y.one.timestamp < z.one.timestamp &&
+                            (z.one.x - z.two.x) / (y.one.x - y.two.x) > 0 &&
+                            (z.one.timestamp - z.two.timestamp) / (y.one.timestamp - y.two.timestamp) > 0 &&
+                            (z.one.timestamp < z.two.timestamp) && (y.one.timestamp < y.two.timestamp) &&
+                            (y.two.timestamp == z.one.timestamp)
+                            ) {
                         try {
                             System.out.println("REMOVAL CORRECT FROM QUEUE");
                             correctCrossing.remove(z.one);
                             correctCrossing.remove(z.two);
                             correctCrossing.remove(y.one);
                             correctCrossing.remove(y.two);
-                            saveThreeImage(z, y, true);
+                            saveThreeImage(y, z, true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                     return z;
                 }
+
         );
         System.out.println("CORRECT ONE TRACE: " + correctCrossingList.size());
         System.out.println("CORRECT ONE TRACE PAIRS: " + correctCrossingPairsList.size());
