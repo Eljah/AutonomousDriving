@@ -519,7 +519,11 @@ public class JavaCVPrjt01 {
         Set<Crossing> incorrectCrossingList = new HashSet<>();// = incorrectCrossing.stream().collect(Collectors.toList());
         List<CrossingPair> incorrectCrossingPairsList = new LinkedList<>();
         incorrectCrossing.stream().reduce( (y, z) -> {
-                    if ((z.timestamp - y.timestamp) > 150 && (z.timestamp - y.timestamp) < 2000) {
+                    if ((z.timestamp - y.timestamp) > 150
+                            && (z.timestamp - y.timestamp) < 4000
+                            && Math.abs(z.x - y.x) > 10
+                            //&& (z.x - y.x)/(z.y - y.y) < 0.5
+                            ) {
                         incorrectCrossingList.add(y);
                         incorrectCrossingList.add(z);
                         CrossingPair crossingPair = new CrossingPair(y, z);
@@ -555,7 +559,11 @@ public class JavaCVPrjt01 {
         Set<Crossing> correctCrossingList = new HashSet<>();// correctCrossing.stream().collect(Collectors.toList());
         List<CrossingPair> correctCrossingPairsList = new LinkedList<>();
         correctCrossing.stream().reduce( (y, z) -> {
-                    if ((z.timestamp - y.timestamp) > 150 && (z.timestamp - y.timestamp) < 4000) {
+                    if ((z.timestamp - y.timestamp) > 150
+                            && (z.timestamp - y.timestamp) < 2000
+                            && Math.abs(z.x - y.x) > 5
+                            //&& (z.x - y.x)/(z.y - y.y) > 0
+                            ) {
                         correctCrossingList.add(y);
                         correctCrossingList.add(z);
                         CrossingPair crossingPair = new CrossingPair(y, z);
@@ -567,6 +575,7 @@ public class JavaCVPrjt01 {
         correctCrossingPairsList.stream().reduce((y, z) -> {
                     if (    y.one.timestamp != z.two.timestamp &&
                             y.one.timestamp < z.one.timestamp &&
+                            (z.one.y - z.two.y)/(y.two.y - y.one.y) > 0 &&  //only here
                             (z.one.x - z.two.x) / (y.one.x - y.two.x) > 0 &&
                             (z.one.timestamp - z.two.timestamp) / (y.one.timestamp - y.two.timestamp) > 0 &&
                             (z.one.timestamp < z.two.timestamp) && (y.one.timestamp < y.two.timestamp) &&
