@@ -28,9 +28,9 @@ public class JavaCVPrjt01 {
     static MatOfPoint2f correctCrossingArea2f = null;
     static MatOfPoint incorrectCrossingArea = null;
     static MatOfPoint2f incorrectCrossingArea2f = null;
-    static int counterSinceLastDetection = 30;
+    static int counterSinceLastDetection = 40;
     static volatile int counterRegistration = 0;
-    final static int counterSinceLastDetectionMax = 30;
+    final static int counterSinceLastDetectionMax = 40;
     final static int counterForRegistrationMax = 3;
     static int contoursCount = 0;
     static int olderContoursCount = 0;
@@ -41,8 +41,8 @@ public class JavaCVPrjt01 {
     static List<Double> coordinatesY = new ArrayList<>();
     static Date timestamp = null;
 
-    static EvictingQueue<Crossing> correctCrossing = EvictingQueue.create(30);
-    static EvictingQueue<Crossing> incorrectCrossing = EvictingQueue.create(30);
+    static EvictingQueue<Crossing> correctCrossing = EvictingQueue.create(40);
+    static EvictingQueue<Crossing> incorrectCrossing = EvictingQueue.create(40);
 
     static {
         //System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -54,15 +54,14 @@ public class JavaCVPrjt01 {
         System.out.println("Hey World !");
 
         correctCrossingArea = new MatOfPoint(
-                new Point(470, 580), new Point(470, 560), new Point(590, 550),
-                new Point(800, 570), new Point(600, 620),
-                new Point(470, 580)
+                new Point(470, 420), new Point(820, 485), new Point(730, 520),
+                new Point(410, 460)
         );
         correctCrossingArea2f = new MatOfPoint2f(correctCrossingArea.toArray());
         incorrectCrossingArea = new MatOfPoint(
-                new Point(360, 500), new Point(530, 500), new Point(1100, 530),
-                new Point(800, 540), //new Point(700, 620),
-                new Point(360, 500)
+                new Point(360, 400), new Point(530, 400), new Point(1100, 430),
+                new Point(800, 440), //new Point(700, 620),
+                new Point(360, 400)
         );
         incorrectCrossingArea2f = new MatOfPoint2f(incorrectCrossingArea.toArray());
         //Mat mat = Mat.eye(3, 3, CvType.CV_8UC1);
@@ -97,7 +96,7 @@ public class JavaCVPrjt01 {
 
 
         System.out.println(camera.isOpened());
-        camera.open("D:/Downloads/video5.mp4");
+        camera.open("D:/Downloads/video6.mp4");
         //camera.open(0);
         //camera.open("resources\\videoSample.mp4");
         System.out.println(camera.isOpened());
@@ -108,7 +107,7 @@ public class JavaCVPrjt01 {
 
         while (true) {
             frames++;
-            if (frames == 5) {
+            if (frames == 1) {
                 if (camera.read(frame)) {
                     frames = 0;
                     Imgproc.resize(frame, frame, sz);
@@ -150,7 +149,10 @@ public class JavaCVPrjt01 {
                         //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size( 40,20));
 
                         Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(40, 30));
+                        //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(20, 20));
+                        //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(70, 90));
 
+                        //Mat blackhat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(40, 40));
                         // Apply morphology operations
                         //Imgproc.erode(diff_frame, diff_frame, car);
                         //Imgproc.dilate(diff_frame, diff_frame, verticalStructure);
@@ -158,6 +160,11 @@ public class JavaCVPrjt01 {
 
 
                         Imgproc.morphologyEx(diff_frame, diff_frame, Imgproc.MORPH_BLACKHAT, blackhat);
+                        //Core.bitwise_not(diff_frame,diff_frame);
+                        //Mat dot = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 1));
+                        //Imgproc.dilate(diff_frame, diff_frame, dot);
+                        //Imgproc.erode(diff_frame, diff_frame, dot);
+                        //Core.bitwise_not(diff_frame,diff_frame);
 
                         /// /Imgproc.dilate(diff_frame, diff_frame, man);
 
@@ -177,6 +184,8 @@ public class JavaCVPrjt01 {
 
                         Scalar green = null;
                         int frameThikness = 1;
+
+                        green = new Scalar(255, 0, 255);
 
                         if (isMotionContinuationDetected()) {
                             green = new Scalar(0, 255, 0);
@@ -242,7 +251,7 @@ public class JavaCVPrjt01 {
                         Iterator<Rect> it3 = array.iterator();
                         while (it3.hasNext()) {
                             Rect obj = it3.next();
-                            Point objectPoint=new Point((obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2);
+                            Point objectPoint = new Point((obj.br().x + obj.x) / 2, (obj.br().y + obj.y) / 2);
                             if (Imgproc.pointPolygonTest(correctCrossingArea2f, objectPoint, true) >= 0) {
                                 Core.putText(
                                         imag,                          // Matrix obj of the image
@@ -255,7 +264,7 @@ public class JavaCVPrjt01 {
                                 );
                                 Core.putText(
                                         imag,                          // Matrix obj of the image
-                                        "X="+objectPoint.x+" Y="+objectPoint.y,          // Text to be added
+                                        "X=" + objectPoint.x + " Y=" + objectPoint.y,          // Text to be added
                                         new Point(500, 50),               // point
                                         Core.FONT_HERSHEY_SIMPLEX,      // front face
                                         1,                               // front scale
@@ -278,7 +287,7 @@ public class JavaCVPrjt01 {
                                 );
                                 Core.putText(
                                         imag,                          // Matrix obj of the image
-                                        "X="+objectPoint.x+" Y="+objectPoint.y,          // Text to be added
+                                        "X=" + objectPoint.x + " Y=" + objectPoint.y,          // Text to be added
                                         new Point(500, 50),               // point
                                         Core.FONT_HERSHEY_SIMPLEX,      // front face
                                         1,                               // front scale
@@ -335,7 +344,7 @@ public class JavaCVPrjt01 {
         Imgproc.findContours(vv, contours, v, Imgproc.RETR_LIST,
                 Imgproc.CHAIN_APPROX_SIMPLE);
 
-        double maxArea = 1000;
+        double maxArea = 1200;
         double minArea = 400;
         int maxAreaIdx = -1;
         Rect r = null;
@@ -376,7 +385,7 @@ public class JavaCVPrjt01 {
                                     Imgproc.pointPolygonTest(incorrectCrossingArea2f, new Point(rX2, rY1), true) >= 0 ||
                                     Imgproc.pointPolygonTest(incorrectCrossingArea2f, massCenterMatOfPoint2f(contour), true) >= 0 ||
                                     Imgproc.pointPolygonTest(correctCrossingArea2f, massCenterMatOfPoint2f(contour), true) >= 0
-                            ) {
+                    ) {
                         rect_array.add(r);
                         Imgproc.drawContours(imag, contours, maxAreaIdx, new Scalar(0, 0, 255));
                         Imgproc.drawContours(imag2, contours, maxAreaIdx, new Scalar(0, 0, 255));
@@ -457,7 +466,7 @@ public class JavaCVPrjt01 {
         if (counterRegistration >= 3 && images.size() == 2 && counterSinceLastDetection > 0
                 && (coordinatesX.get(1) - coordinatesX.get(0)) / (xCoordinate - coordinatesX.get(1)) > 0
                 && (coordinatesY.get(1) - coordinatesY.get(0)) / (yCoordinate - coordinatesY.get(1)) > 0
-                ) {
+        ) {
             System.out.println("SAVING!");
             System.out.println((coordinatesX.get(1) - coordinatesX.get(0)) / (xCoordinate - coordinatesX.get(1)));
             System.out.println("(" + coordinatesX.get(1) + "-" + coordinatesX.get(0) + ")/(" + xCoordinate + "-" + coordinatesX.get(1) + ")");
@@ -518,12 +527,13 @@ public class JavaCVPrjt01 {
         System.out.println("INCORRECT: " + incorrectCrossing.stream().count());
         Set<Crossing> incorrectCrossingList = new HashSet<>();// = incorrectCrossing.stream().collect(Collectors.toList());
         List<CrossingPair> incorrectCrossingPairsList = new LinkedList<>();
-        incorrectCrossing.stream().reduce( (y, z) -> {
+        incorrectCrossing.stream().reduce((y, z) -> {
+                    //System.out.println("REDUCE INCORRECT 1");
                     if ((z.timestamp - y.timestamp) > 150
-                            && (z.timestamp - y.timestamp) < 4000
+                            &&(z.timestamp - y.timestamp) < 10000
                             && Math.abs(z.x - y.x) > 10
-                            //&& (z.x - y.x)/(z.y - y.y) < 0.5
-                            ) {
+                        //&& (z.x - y.x)/(z.y - y.y) < 0.5
+                    ) {
                         incorrectCrossingList.add(y);
                         incorrectCrossingList.add(z);
                         CrossingPair crossingPair = new CrossingPair(y, z);
@@ -533,12 +543,13 @@ public class JavaCVPrjt01 {
                 }
         );
         incorrectCrossingPairsList.stream().reduce((y, z) -> {
-                    if (    y.one.timestamp != z.two.timestamp &&
+                    //System.out.println("REDUCE INCORRECT 2");
+                    if (y.one.timestamp != z.two.timestamp &&
                             y.one.timestamp < z.one.timestamp &&
                             (z.one.x - z.two.x) / (y.one.x - y.two.x) > 0 &&
                             (z.one.timestamp - z.two.timestamp) / (y.one.timestamp - y.two.timestamp) > 0 &&
                             (z.one.timestamp < z.two.timestamp) && (y.one.timestamp < y.two.timestamp) && (y.two.timestamp == z.one.timestamp)
-                            ) {
+                    ) {
                         try {
                             System.out.println("REMOVAL INCORRECT FROM QUEUE");
                             incorrectCrossing.remove(z.one);
@@ -558,12 +569,14 @@ public class JavaCVPrjt01 {
         System.out.println("CORRECT: " + correctCrossing.stream().count());
         Set<Crossing> correctCrossingList = new HashSet<>();// correctCrossing.stream().collect(Collectors.toList());
         List<CrossingPair> correctCrossingPairsList = new LinkedList<>();
-        correctCrossing.stream().reduce( (y, z) -> {
+        correctCrossing.stream().reduce((y, z) -> {
+                    //System.out.println("REDUCE CORRECT 1");
                     if ((z.timestamp - y.timestamp) > 150
-                            && (z.timestamp - y.timestamp) < 2000
+                            && (z.timestamp - y.timestamp) < 5000
                             && Math.abs(z.x - y.x) > 5
-                            //&& (z.x - y.x)/(z.y - y.y) > 0
-                            ) {
+                            && Math.abs(z.y - y.y) > 2
+                        //&& (z.x - y.x)/(z.y - y.y) > 0
+                    ) {
                         correctCrossingList.add(y);
                         correctCrossingList.add(z);
                         CrossingPair crossingPair = new CrossingPair(y, z);
@@ -573,14 +586,16 @@ public class JavaCVPrjt01 {
                 }
         );
         correctCrossingPairsList.stream().reduce((y, z) -> {
-                    if (    y.one.timestamp != z.two.timestamp &&
+                    //System.out.println("REDUCE CORRECT 2");
+                    if (y.one.timestamp != z.two.timestamp &&
                             y.one.timestamp < z.one.timestamp &&
-                            (z.one.y - z.two.y)/(y.two.y - y.one.y) > 0 &&  //only here
+                            (z.one.y - z.two.y) / (y.one.y - y.two.y) > 0 &&
                             (z.one.x - z.two.x) / (y.one.x - y.two.x) > 0 &&
+                            //(z.one.x - z.two.x) / (z.one.y - z.two.y) > 0 &&
                             (z.one.timestamp - z.two.timestamp) / (y.one.timestamp - y.two.timestamp) > 0 &&
                             (z.one.timestamp < z.two.timestamp) && (y.one.timestamp < y.two.timestamp) &&
                             (y.two.timestamp == z.one.timestamp)
-                            ) {
+                    ) {
                         try {
                             System.out.println("REMOVAL CORRECT FROM QUEUE");
                             correctCrossing.remove(z.one);
